@@ -35,7 +35,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	 * @return map digraph factory
 	 */
 	public static <V> DigraphFactory<MapDigraph<V>> getDefaultDigraphFactory() {
-		return getMapDigraphFactory(MapDigraph.<V>getDefaultVertexMapFactory(null), MapDigraph.<V>getDefaultEdgeMapFactory(null));
+		return getMapDigraphFactory(MapDigraph.getDefaultVertexMapFactory(null), MapDigraph.getDefaultEdgeMapFactory(null));
 	}
 
 	/**
@@ -47,26 +47,21 @@ public class MapDigraph<V> implements Digraph<V> {
 	public static <V> DigraphFactory<MapDigraph<V>> getMapDigraphFactory(
 			final VertexMapFactory<V> vertexMapFactory,
 			final EdgeMapFactory<V> edgeMapFactory) {
-		return new DigraphFactory<MapDigraph<V>>() {
-			@Override
-			public MapDigraph<V> create() {
-				return new MapDigraph<V>(vertexMapFactory, edgeMapFactory);
-			}
-		};
+		return () -> new MapDigraph<>(vertexMapFactory, edgeMapFactory);
 	}
 
 	/**
 	 * Vertex map factory (vertex to edge map).
 	 */
-	public static interface VertexMapFactory<V> {
-		public Map<V, Map<V, Integer>> create();
+	public interface VertexMapFactory<V> {
+		Map<V, Map<V, Integer>> create();
 	}
 
 	/**
 	 * Edge map factory (edge target to edge value).
 	 */
-	public static interface EdgeMapFactory<V> {
-		public Map<V, Integer> create(V source);
+	public interface EdgeMapFactory<V> {
+		Map<V, Integer> create(V source);
 	}
 
 	private static final <V> VertexMapFactory<V> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
@@ -74,9 +69,9 @@ public class MapDigraph<V> implements Digraph<V> {
 			@Override
 			public Map<V, Map<V, Integer>> create() {
 				if (comparator == null) {
-					return new LinkedHashMap<V, Map<V, Integer>>(16);
+					return new LinkedHashMap<>(16);
 				} else {
-					return new TreeMap<V, Map<V, Integer>>(comparator);
+					return new TreeMap<>(comparator);
 				}
 			}
 		};
@@ -87,9 +82,9 @@ public class MapDigraph<V> implements Digraph<V> {
 			@Override
 			public Map<V, Integer> create(V ignore) {
 				if (comparator == null) {
-					return new LinkedHashMap<V, Integer>(16);
+					return new LinkedHashMap<>(16);
 				} else {
-					return new TreeMap<V, Integer>(comparator);
+					return new TreeMap<>(comparator);
 				}
 			}
 		};
@@ -125,12 +120,10 @@ public class MapDigraph<V> implements Digraph<V> {
 	 * If a vertex comparator is given, {@link TreeMap}s will be used as vertex maps
 	 * and vertices will be iterated in the order given by the vertex comparator. 
 	 * If an edge comparator is given, {@link TreeMap}s will be used as edge maps
-	 * and edge targets will be iterated in the order given by the edge comparator. 
-	 * @param vertexComparator
-	 * @param edgeComparator
+	 * and edge targets will be iterated in the order given by the edge comparator.
 	 */
 	public MapDigraph(final Comparator<? super V> vertexComparator, final Comparator<? super V> edgeComparator) {
-		this(MapDigraph.<V> getDefaultVertexMapFactory(vertexComparator), MapDigraph.<V> getDefaultEdgeMapFactory(edgeComparator));
+		this(MapDigraph.getDefaultVertexMapFactory(vertexComparator), MapDigraph.getDefaultEdgeMapFactory(edgeComparator));
 	}
 
 	/**
@@ -238,11 +231,13 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	@Override
-	public boolean contains(Object source, Object target) {
+	public boolean contains(V source, V target) {
 		Map<V, Integer> edgeMap = vertexMap.get(source);
+
 		if (edgeMap == null) {
 			return false;
 		}
+
 		return edgeMap.containsKey(target);
 	}
 

@@ -23,7 +23,6 @@ import java.util.Set;
  * A digraph adapter delegates to a digraph supplied at construction time.
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
 public abstract class DigraphAdapter<V> implements Digraph<V> {	
 	private final Digraph<V> delegate;

@@ -52,7 +52,6 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	/**
 	 * create equivalent graphs whith different edge orderings.
 	 * @param digraph digraph to copy
-	 * @param weights edge weights
 	 * @return list of copies
 	 */
 	private <V> List<Digraph<V>> copies(Digraph<V> digraph, int count) {

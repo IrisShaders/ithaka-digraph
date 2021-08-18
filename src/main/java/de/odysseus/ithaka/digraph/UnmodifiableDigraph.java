@@ -22,7 +22,6 @@ import java.util.Collection;
  * Overrides <code>add</code>, <code>put</code>, <code>remove</code>, <code>removeAll</code> to throw an exception.
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
 public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	public UnmodifiableDigraph(Digraph<V> digraph) {
