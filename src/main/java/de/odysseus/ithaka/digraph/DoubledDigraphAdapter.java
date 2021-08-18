@@ -23,51 +23,50 @@ import java.util.Iterator;
  * Doubled digraph implementation.
  * 
  * @param <V> vertex type
- * @param <E> edge type
  */
-public class DoubledDigraphAdapter<V,E> extends DigraphAdapter<V,E> implements DoubledDigraph<V,E> {
+public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements DoubledDigraph<V> {
 	/**
 	 * Factory creating <code>DoubledDigraph</code>.
 	 * @param factory delegate factory
 	 * @return doubled digraph factory
 	 */
-	public static <V,E> DigraphFactory<DoubledDigraphAdapter<V,E>> getAdapterFactory(final DigraphFactory<? extends Digraph<V,E>> factory) {
-		return new DigraphFactory<DoubledDigraphAdapter<V,E>>() {
+	public static <V> DigraphFactory<DoubledDigraphAdapter<V>> getAdapterFactory(final DigraphFactory<? extends Digraph<V>> factory) {
+		return new DigraphFactory<DoubledDigraphAdapter<V>>() {
 			@Override
-			public DoubledDigraphAdapter<V,E> create() {
-				return new DoubledDigraphAdapter<V,E>(factory);
+			public DoubledDigraphAdapter<V> create() {
+				return new DoubledDigraphAdapter<V>(factory);
 			}
 		};
 	}
 	
-	private final DoubledDigraphAdapter<V,E> reverse;
-	private final DigraphFactory<? extends Digraph<V,E>> factory;
+	private final DoubledDigraphAdapter<V> reverse;
+	private final DigraphFactory<? extends Digraph<V>> factory;
 	
 	public DoubledDigraphAdapter() {
-		this(MapDigraph.<V,E>getDefaultDigraphFactory());
+		this(MapDigraph.<V>getDefaultDigraphFactory());
 	}
 
-	public DoubledDigraphAdapter(DigraphFactory<? extends Digraph<V,E>> factory) {
+	public DoubledDigraphAdapter(DigraphFactory<? extends Digraph<V>> factory) {
 		super(factory.create());
 		this.factory = factory;
 		this.reverse = createReverse();
 	}
 
-	protected DoubledDigraphAdapter(DigraphFactory<? extends Digraph<V,E>> factory, DoubledDigraphAdapter<V,E> reverse) {
+	protected DoubledDigraphAdapter(DigraphFactory<? extends Digraph<V>> factory, DoubledDigraphAdapter<V> reverse) {
 		super(factory.create());
 		this.factory = factory;
 		this.reverse = reverse;
 	}
 
-	protected DoubledDigraphAdapter<V,E> createReverse() {
-		return new DoubledDigraphAdapter<V, E>(factory, this);
+	protected DoubledDigraphAdapter<V> createReverse() {
+		return new DoubledDigraphAdapter<V>(factory, this);
 	}
 
-	protected DigraphFactory<? extends DoubledDigraph<V, E>> getDigraphFactory() {
+	protected DigraphFactory<? extends DoubledDigraph<V>> getDigraphFactory() {
 		return getAdapterFactory(factory);
 	}
 	
-	protected DigraphFactory<? extends Digraph<V,E>> getDelegateFactory() {
+	protected DigraphFactory<? extends Digraph<V>> getDelegateFactory() {
 		return factory;
 	}
 	
@@ -186,27 +185,27 @@ public class DoubledDigraphAdapter<V,E> extends DigraphAdapter<V,E> implements D
 	}
 	
 	@Override
-	public final E put(V source, V target, E edge) {
+	public final int put(V source, V target, int edge) {
 		reverse.put0(target, source, edge);
 		return put0(source, target, edge);
 	}
 
-	protected E put0(V source, V target, E edge) {
+	protected int put0(V source, V target, int edge) {
 		return super.put(source, target, edge);
 	}
 
 	@Override
-	public final E remove(V source, V target) {
+	public final int remove(V source, V target) {
 		reverse.remove0(target, source);
 		return remove0(source, target);
 	}
 
-	protected E remove0(V source, V target) {
+	protected int remove0(V source, V target) {
 		return super.remove(source, target);
 	}
 
 	@Override
-	public final DoubledDigraphAdapter<V, E> reverse() {
+	public final DoubledDigraphAdapter<V> reverse() {
 		return reverse;
 	}
 }

@@ -15,7 +15,7 @@
  */
 package de.odysseus.ithaka.digraph.io.tgf;
 
-public interface TGFProvider<V, E> {
+public interface TGFProvider<V> {
 	public String getVertexLabel(V vertex);
 	public String getEdgeLabel(E edge);
 }

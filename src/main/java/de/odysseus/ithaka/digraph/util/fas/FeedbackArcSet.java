@@ -24,12 +24,12 @@ import de.odysseus.ithaka.digraph.UnmodifiableDigraph;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class FeedbackArcSet<V, E> extends UnmodifiableDigraph<V, E> {
+public class FeedbackArcSet<V> extends UnmodifiableDigraph<V> {
 	private final FeedbackArcSetPolicy policy;
 	private final boolean exact;
 	private final int weight;
 	
-	public FeedbackArcSet(Digraph<V, E> feedback, int weight, FeedbackArcSetPolicy policy, boolean exact) {
+	public FeedbackArcSet(Digraph<V> feedback, int weight, FeedbackArcSetPolicy policy, boolean exact) {
 		super(feedback);
 		this.weight = weight;
 		this.policy = policy;

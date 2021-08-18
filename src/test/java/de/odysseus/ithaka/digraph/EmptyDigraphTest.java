@@ -22,89 +22,89 @@ public class EmptyDigraphTest {
 
 	@Test(expected=UnsupportedOperationException.class)
 	public void testAdd() {
-		new EmptyDigraph<Object,Object>().add("foo");
+		new EmptyDigraph<>().add("foo");
 	}
 
 	@Test
 	public void testContainsObjectObject() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().contains("foo", "bar"));
+		Assert.assertFalse(new EmptyDigraph<>().contains("foo", "bar"));
 	}
 
 	@Test
 	public void testContainsObject() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().contains("foo"));
+		Assert.assertFalse(new EmptyDigraph<>().contains("foo"));
 	}
 
 	@Test
 	public void testGet() {
-		Assert.assertNull(new EmptyDigraph<Object,Object>().get("foo", "bar"));
+		Assert.assertEquals(0, new EmptyDigraph<>().get("foo", "bar"));
 	}
 
 	@Test
 	public void testGetInDegree() {
-		Assert.assertEquals(0, new EmptyDigraph<Object,Object>().getInDegree("foo"));
+		Assert.assertEquals(0, new EmptyDigraph<>().getInDegree("foo"));
 	}
 
 	@Test
 	public void testGetOutDegree() {
-		Assert.assertEquals(0, new EmptyDigraph<Object,Object>().getOutDegree("foo"));
+		Assert.assertEquals(0, new EmptyDigraph<>().getOutDegree("foo"));
 	}
 
 	@Test
 	public void testGetEdgeCount() {
-		Assert.assertEquals(0, new EmptyDigraph<Object,Object>().getEdgeCount());
+		Assert.assertEquals(0, new EmptyDigraph<>().getEdgeCount());
 	}
 
 	@Test
 	public void testGetNodeCount() {
-		Assert.assertEquals(0, new EmptyDigraph<Object,Object>().getVertexCount());
+		Assert.assertEquals(0, new EmptyDigraph<>().getVertexCount());
 	}
 
 	@Test
 	public void testNodes() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().vertices().iterator().hasNext());
+		Assert.assertFalse(new EmptyDigraph<>().vertices().iterator().hasNext());
 	}
 
 	@Test(expected=UnsupportedOperationException.class)
 	public void testPut() {
-		new EmptyDigraph<Object,Object>().put("foo", "bar", "foobar");
+		new EmptyDigraph<>().put("foo", "bar", 2);
 	}
 
 	@Test
 	public void testRemoveObjectObject() {
-		Assert.assertNull(new EmptyDigraph<Object,Object>().remove("foo", "bar"));
+		Assert.assertEquals(0, new EmptyDigraph<>().remove("foo", "bar"));
 	}
 
 	@Test
 	public void testRemoveObject() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().remove("foo"));
+		Assert.assertFalse(new EmptyDigraph<>().remove("foo"));
 	}
 
 	@Test
 	public void testReverse() {
-		EmptyDigraph<Object,Object> g = new EmptyDigraph<Object,Object>();
+		EmptyDigraph<Object> g = new EmptyDigraph<>();
 		Assert.assertSame(g, g.reverse());
 	}
 
 	@Test
 	public void testSubgraph() {
-		EmptyDigraph<Object,Object> g = new EmptyDigraph<Object,Object>();
+		EmptyDigraph<Object> g = new EmptyDigraph<>();
 		Assert.assertSame(g, g.subgraph(null));
 	}
 
 	@Test
 	public void testSources() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().sources("foo").iterator().hasNext());
+		Assert.assertFalse(new EmptyDigraph<>().sources("foo").iterator().hasNext());
 	}
 
 	@Test
 	public void testTargets() {
-		Assert.assertFalse(new EmptyDigraph<Object,Object>().targets("foo").iterator().hasNext());
+		Assert.assertFalse(new EmptyDigraph<>().targets("foo").iterator().hasNext());
 	}
 
 	@Test
 	public void testIsAcyclic() {
-		Assert.assertTrue(new EmptyDigraph<Object,Object>().isAcyclic());
+		Assert.assertTrue(new EmptyDigraph<>().isAcyclic());
 	}
 
 }

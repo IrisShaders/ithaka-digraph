@@ -25,10 +25,10 @@ import java.util.Set;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {	
-	private final Digraph<V,E> delegate;
+public abstract class DigraphAdapter<V> implements Digraph<V> {	
+	private final Digraph<V> delegate;
 	
-	public DigraphAdapter(Digraph<V,E> delegate) {
+	public DigraphAdapter(Digraph<V> delegate) {
 		this.delegate = delegate;
 	}
 
@@ -38,7 +38,7 @@ public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {
 	}
 
 	@Override
-	public boolean contains(Object source, Object target) {
+	public boolean contains(V source, V target) {
 		return delegate.contains(source, target);
 	}
 
@@ -48,7 +48,7 @@ public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {
 	}
 
 	@Override
-	public E get(Object source, Object target) {
+	public int get(V source, V target) {
 		return delegate.get(source, target);
 	}
 
@@ -68,17 +68,22 @@ public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {
 	}
 
 	@Override
+	public int totalWeight() {
+		return delegate.totalWeight();
+	}
+
+	@Override
 	public Iterable<V> vertices() {
 		return delegate.vertices();
 	}
 
 	@Override
-	public E put(V source, V target, E edge) {
+	public int put(V source, V target, int edge) {
 		return delegate.put(source, target, edge);
 	}
 
 	@Override
-	public E remove(V source, V target) {
+	public int remove(V source, V target) {
 		return delegate.remove(source, target);
 	}
 
@@ -93,12 +98,12 @@ public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {
 	}
 	
 	@Override
-	public Digraph<V,E> reverse() {
+	public Digraph<V> reverse() {
 		return delegate.reverse();
 	}
 	
 	@Override
-	public Digraph<V, E> subgraph(Set<V> vertices) {
+	public Digraph<V> subgraph(Set<V> vertices) {
 		return delegate.subgraph(vertices);
 	}
 	
@@ -119,10 +124,15 @@ public abstract class DigraphAdapter<V,E> implements Digraph<V,E> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj != null && obj.getClass() == getClass()) {
-			return delegate.equals(((DigraphAdapter<?,?>)obj).delegate);
+		if (obj == null) {
+			return false;
 		}
-		return false;
+
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+
+		return delegate.equals(((DigraphAdapter<?>) obj).delegate);
 	}
 	
 	@Override

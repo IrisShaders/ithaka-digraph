@@ -31,11 +31,11 @@ import de.odysseus.ithaka.digraph.layout.DigraphLayoutArc;
 import de.odysseus.ithaka.digraph.layout.DigrpahLayoutBuilder;
 import de.odysseus.ithaka.digraph.layout.DigraphLayoutNode;
 
-public class YFilesGraphML<V, E> {
+public class YFilesGraphML<V> {
 	private static final String SCHEMA_LOCATION = "http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd";
 	
-	private final LayoutTree<V, E> layoutTree;
-	private final SimpleGraphMLProvider<DigraphLayoutNode<V>, DigraphLayoutArc<V,E>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V,E>>> provider;
+	private final LayoutTree<V> layoutTree;
+	private final SimpleGraphMLProvider<DigraphLayoutNode<V>, DigraphLayoutArc<V>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V>>> provider;
 	
 	static abstract class GraphMLPropertyDelegate<S, T> implements GraphMLProperty<T> {
 		final GraphMLProperty<S> property;
@@ -62,16 +62,16 @@ public class YFilesGraphML<V, E> {
 	}
 
 	public YFilesGraphML(
-			Digraph<V, E> digraph,
-			DigrpahLayoutBuilder<V, E> builder,
+			Digraph<V> digraph,
+			DigrpahLayoutBuilder<V> builder,
 			LabelResolver<? super V> labels,
 			Font font) {
 		this(digraph, builder, labels, null, font, font);
 	}
 
 	public YFilesGraphML(
-			Digraph<V, E> digraph,
-			DigrpahLayoutBuilder<V, E> builder,
+			Digraph<V> digraph,
+			DigrpahLayoutBuilder<V> builder,
 			LabelResolver<? super V> nodeLabels,
 			LabelResolver<? super E> edgeLabels,
 			Font nodeFont,
@@ -80,9 +80,9 @@ public class YFilesGraphML<V, E> {
 	}
 
 	public YFilesGraphML(
-			Digraph<V, E> digraph,
-			DigraphProvider<V, Digraph<V,E>> subgraphs,
-			DigrpahLayoutBuilder<V, E> builder,
+			Digraph<V> digraph,
+			DigraphProvider<V, Digraph<V>> subgraphs,
+			DigrpahLayoutBuilder<V> builder,
 			LabelResolver<? super V> nodeLabels,
 			Font nodeFont,
 			boolean groupNodes) {
@@ -90,22 +90,22 @@ public class YFilesGraphML<V, E> {
 	}
 
 	public YFilesGraphML(
-			Digraph<V, E> digraph,
-			DigraphProvider<V, Digraph<V,E>> subgraphs,
-			DigrpahLayoutBuilder<V, E> builder,
+			Digraph<V> digraph,
+			DigraphProvider<V, Digraph<V>> subgraphs,
+			DigrpahLayoutBuilder<V> builder,
 			LabelResolver<? super V> nodeLabels,
 			LabelResolver<? super E> edgeLabels,
 			Font nodeFont,
 			Font edgeFont,
 			boolean groupNodes) {
-		this(digraph, subgraphs, new SimpleGraphMLProvider<V, E, Digraph<V,E>>(), builder, nodeLabels, edgeLabels, nodeFont, edgeFont, groupNodes);
+		this(digraph, subgraphs, new SimpleGraphMLProvider<V, Digraph<V>>(), builder, nodeLabels, edgeLabels, nodeFont, edgeFont, groupNodes);
 	}
 
 	public YFilesGraphML(
-			Digraph<V, E> digraph,
-			DigraphProvider<V, Digraph<V,E>> subgraphs,
-			GraphMLProvider<V, E, Digraph<V,E>> delegate,
-			DigrpahLayoutBuilder<V, E> builder,
+			Digraph<V> digraph,
+			DigraphProvider<V, Digraph<V>> subgraphs,
+			GraphMLProvider<V, Digraph<V>> delegate,
+			DigrpahLayoutBuilder<V> builder,
 			LabelResolver<? super V> nodeLabels,
 			LabelResolver<? super E> edgeLabels,
 			Font nodeFont,
@@ -113,31 +113,31 @@ public class YFilesGraphML<V, E> {
 			boolean groupNodes) {
 		this(
 			delegate,
-			new LayoutTree<V, E>(digraph, subgraphs, builder, nodeLabels, nodeFont),
+			new LayoutTree<V>(digraph, subgraphs, builder, nodeLabels, nodeFont),
 			new NodeGraphicsProperty<V>(nodeLabels, nodeFont, subgraphs, groupNodes),
-			new EdgeGraphicsProperty<V, E>(edgeLabels, edgeFont));
+			new EdgeGraphicsProperty<V>(edgeLabels, edgeFont));
 	}
 
 	public YFilesGraphML(
-			GraphMLProvider<V, E, Digraph<V,E>> delegate,
-			LayoutTree<V, E> layoutTree,
+			GraphMLProvider<V, Digraph<V>> delegate,
+			LayoutTree<V> layoutTree,
 			NodeGraphicsProperty<V> nodeGraphics,
-			EdgeGraphicsProperty<V, E> edgeGraphics) {
+			EdgeGraphicsProperty<V> edgeGraphics) {
 		this.layoutTree = layoutTree;
-		this.provider = new SimpleGraphMLProvider<DigraphLayoutNode<V>, DigraphLayoutArc<V,E>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V,E>>>(SCHEMA_LOCATION);
+		this.provider = new SimpleGraphMLProvider<DigraphLayoutNode<V>, DigraphLayoutArc<V>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V>>>(SCHEMA_LOCATION);
 
-		for (final GraphMLProperty<Digraph<V,E>> graphProperty : delegate.getGraphProperties()) {
-			provider.addGraphProperty(new GraphMLPropertyDelegate<Digraph<V,E>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V,E>>>(graphProperty) {
+		for (final GraphMLProperty<Digraph<V>> graphProperty : delegate.getGraphProperties()) {
+			provider.addGraphProperty(new GraphMLPropertyDelegate<Digraph<V>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V>>>(graphProperty) {
 				@Override
-				public void writeData(XMLStreamWriter writer, String id, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V, E>> value) throws XMLStreamException {
+				public void writeData(XMLStreamWriter writer, String id, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V>> value) throws XMLStreamException {
 					property.writeData(writer, id, findDigraph(YFilesGraphML.this.layoutTree, value));
 				}
-				Digraph<V,E> findDigraph(LayoutTree<V, E> layoutTree, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V, E>> layoutGraph) {
+				Digraph<V> findDigraph(LayoutTree<V> layoutTree, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V>> layoutGraph) {
 					if (layoutTree.getLayout().getLayoutGraph() == layoutGraph) {
 						return layoutTree.getDigraph();
 					}
 					for (V subtreeVertex : layoutTree.subtreeVertices()) {
-						Digraph<V,E> result = findDigraph(layoutTree.getSubtree(subtreeVertex), layoutGraph);
+						Digraph<V> result = findDigraph(layoutTree.getSubtree(subtreeVertex), layoutGraph);
 						if (result != null) {
 							return result;
 						}
@@ -157,9 +157,9 @@ public class YFilesGraphML<V, E> {
 		}
 
 		for (final GraphMLProperty<E> edgeProperty : delegate.getEdgeProperties()) {
-			provider.addEdgeProperty(new GraphMLPropertyDelegate<E, DigraphLayoutArc<V,E>>(edgeProperty) {
+			provider.addEdgeProperty(new GraphMLPropertyDelegate<E, DigraphLayoutArc<V>>(edgeProperty) {
 				@Override
-				public void writeData(XMLStreamWriter writer, String id, DigraphLayoutArc<V,E> value) throws XMLStreamException {
+				public void writeData(XMLStreamWriter writer, String id, DigraphLayoutArc<V> value) throws XMLStreamException {
 					property.writeData(writer, id, value.getEdge());
 				}
 			});
@@ -169,11 +169,11 @@ public class YFilesGraphML<V, E> {
 		provider.addEdgeProperty(edgeGraphics);
 	}
 	
-	private DigraphProvider<? super DigraphLayoutNode<V>, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V, E>>> getSubgraphProvider() {
-		return new DigraphProvider<DigraphLayoutNode<V>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V,E>>>() {
+	private DigraphProvider<? super DigraphLayoutNode<V>, Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V>>> getSubgraphProvider() {
+		return new DigraphProvider<DigraphLayoutNode<V>, Digraph<? extends DigraphLayoutNode<V>,? extends DigraphLayoutArc<V>>>() {
 			@Override
-			public Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V, E>> get(DigraphLayoutNode<V> node) {
-				LayoutTree<V, E> subtree = layoutTree.find(node.getVertex());
+			public Digraph<? extends DigraphLayoutNode<V>, ? extends DigraphLayoutArc<V>> get(DigraphLayoutNode<V> node) {
+				LayoutTree<V> subtree = layoutTree.find(node.getVertex());
 				return subtree == null ? null : subtree.getLayout().getLayoutGraph();
 			}
 		};

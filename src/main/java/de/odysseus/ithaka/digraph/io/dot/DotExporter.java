@@ -27,7 +27,7 @@ import de.odysseus.ithaka.digraph.Digraph;
 import de.odysseus.ithaka.digraph.DigraphProvider;
 
 public class DotExporter {
-	private static class Cluster<V, E, G extends Digraph<? extends V, ? extends E>> {
+	private static class Cluster<V, G extends Digraph<? extends V, ? extends E>> {
 		String id;
 		G subgraph;
 		V sample;
@@ -101,8 +101,8 @@ public class DotExporter {
 		writer.write(lineSpeparator);
 	}
 
-	private <V, E> void writeEdge(Writer writer, int level, V source, V target, E edge, DotProvider<V, E, ?> provider,
-			Cluster<V, E, ?> sourceCluster, Cluster<V, E, ?> targetCluster) throws IOException {
+	private <V> void writeEdge(Writer writer, int level, V source, V target, E edge, DotProvider<V, ?> provider,
+			Cluster<V, ?> sourceCluster, Cluster<V, ?> targetCluster) throws IOException {
 		indent(writer, level);
 		writer.write(provider.getNodeId(sourceCluster == null ? source : sourceCluster.sample));
 		writer.write(" -> ");
@@ -131,24 +131,24 @@ public class DotExporter {
 		writer.write(lineSpeparator);
 	}
 
-	private <V, E, G extends Digraph<? extends V, ? extends E>> Map<V, Cluster<V,E,G>> createClusters(
+	private <V, G extends Digraph<? extends V, ? extends E>> Map<V, Cluster<V,G>> createClusters(
 			G digraph,
-			DotProvider<V, E, G> provider,
+			DotProvider<V, G> provider,
 			DigraphProvider<? super V, G> subgraphs) throws IOException {
-		Map<V, Cluster<V,E,G>> clusters = new HashMap<V, Cluster<V,E,G>>();
+		Map<V, Cluster<V,G>> clusters = new HashMap<V, Cluster<V,G>>();
 		if (subgraphs != null) {
 			for (V vertex : digraph.vertices()) {
 				G subgraph = subgraphs.get(vertex);
 				if (subgraph != null && subgraph.getVertexCount() > 0) {
-					clusters.put(vertex, new Cluster<V, E, G>("cluster_" + provider.getNodeId(vertex), subgraph));
+					clusters.put(vertex, new Cluster<V, G>("cluster_" + provider.getNodeId(vertex), subgraph));
 				}
 			}
 		}
 		return clusters;
 	}
 
-	public <V, E, G extends Digraph<? extends V, ? extends E>> void export(
-			DotProvider<V, E, G> provider,
+	public <V, G extends Digraph<? extends V, ? extends E>> void export(
+			DotProvider<V, G> provider,
 			G digraph,
 			DigraphProvider<? super V, G> subgraphs,
 			Writer writer) throws IOException {
@@ -156,7 +156,7 @@ public class DotExporter {
 		writer.write("digraph G {");
 		writer.write(lineSpeparator);
 
-		Map<V, Cluster<V,E,G>> clusters = createClusters(digraph, provider, subgraphs);
+		Map<V, Cluster<V,G>> clusters = createClusters(digraph, provider, subgraphs);
 		if (!clusters.isEmpty()) {
 			indent(writer, 1);
 			writer.write("compound=true;");
@@ -175,12 +175,12 @@ public class DotExporter {
 		writer.flush();
 	}
 
-	private <V, E, G extends Digraph<? extends V, ? extends E>> void writeNodesAndEdges(
+	private <V, G extends Digraph<? extends V, ? extends E>> void writeNodesAndEdges(
 			Writer writer,
 			int level,
-			DotProvider<V, E, G> provider,
+			DotProvider<V, G> provider,
 			G digraph,
-			Map<V, Cluster<V,E,G>> clusters,
+			Map<V, Cluster<V,G>> clusters,
 			DigraphProvider<? super V, G> subgraphs) throws IOException {
 		for (V vertex : digraph.vertices()) {
 			if (clusters.containsKey(vertex)) {
@@ -197,12 +197,12 @@ public class DotExporter {
 		}
 	}
 
-	private <V, E, G extends Digraph<? extends V, ? extends E>> void writeCluster(
+	private <V, G extends Digraph<? extends V, ? extends E>> void writeCluster(
 			Writer writer,
 			int level,
-			DotProvider<V, E, G> provider,
+			DotProvider<V, G> provider,
 			V subgraphVertex,
-			Cluster<V,E,G> cluster,
+			Cluster<V,G> cluster,
 			DigraphProvider<? super V, G> subgraphs) throws IOException {
 		
 		indent(writer, level);
@@ -213,7 +213,7 @@ public class DotExporter {
 
 		writeDefaultAttributes(writer, level + 1, "graph", provider.getSubgraphAttributes(cluster.subgraph, subgraphVertex));
 		
-		Map<V, Cluster<V,E,G>> subclusters = createClusters(cluster.subgraph, provider, subgraphs);
+		Map<V, Cluster<V,G>> subclusters = createClusters(cluster.subgraph, provider, subgraphs);
 		writeNodesAndEdges(writer, level + 1, provider, cluster.subgraph, subclusters, subgraphs);
 
 		indent(writer, level);

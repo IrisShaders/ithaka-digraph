@@ -24,8 +24,8 @@ import java.util.Collection;
  * @param <V> vertex type
  * @param <E> edge type
  */
-public class UnmodifiableDigraph<V, E> extends DigraphAdapter<V, E> {
-	public UnmodifiableDigraph(Digraph<V, E> digraph) {
+public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
+	public UnmodifiableDigraph(Digraph<V> digraph) {
 		super(digraph);
 	}
 	
@@ -41,7 +41,7 @@ public class UnmodifiableDigraph<V, E> extends DigraphAdapter<V, E> {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public final E put(V source, V target, E edge) {
+	public final int put(V source, V target, int edge) {
 		throw new UnsupportedOperationException("This digraph is readonly!");
 	}
 	
@@ -57,7 +57,7 @@ public class UnmodifiableDigraph<V, E> extends DigraphAdapter<V, E> {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public final E remove(V source, V target) {
+	public final int remove(V source, V target) {
 		throw new UnsupportedOperationException("This digraph is readonly!");
 	}
 	

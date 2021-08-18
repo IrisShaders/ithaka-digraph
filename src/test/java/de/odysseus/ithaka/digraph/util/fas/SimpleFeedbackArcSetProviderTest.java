@@ -29,14 +29,6 @@ import org.junit.Test;
 
 import de.odysseus.ithaka.digraph.Digraph;
 import de.odysseus.ithaka.digraph.EdgeWeights;
-import de.odysseus.ithaka.digraph.SimpleDigraph;
-import de.odysseus.ithaka.digraph.SimpleDigraphAdapter;
-import de.odysseus.ithaka.digraph.WeightedDigraph;
-import de.odysseus.ithaka.digraph.WeightedDigraphAdapter;
-import de.odysseus.ithaka.digraph.util.fas.FeedbackArcSet;
-import de.odysseus.ithaka.digraph.util.fas.FeedbackArcSetPolicy;
-import de.odysseus.ithaka.digraph.util.fas.FeedbackArcSetProvider;
-import de.odysseus.ithaka.digraph.util.fas.SimpleFeedbackArcSetProvider;
 
 public class SimpleFeedbackArcSetProviderTest {
 	private SimpleDigraphAdapter<Integer> randomGraph(Random rng, int nodeCount, int arcCount) {

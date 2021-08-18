@@ -28,15 +28,14 @@ import java.util.TreeMap;
  * Map-based directed graph implementation.
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
-public class MapDigraph<V, E> implements Digraph<V, E> {
+public class MapDigraph<V> implements Digraph<V> {
 	/**
 	 * Factory creating default <code>MapDigraph</code>.
 	 * @return map digraph factory
 	 */
-	public static <V, E> DigraphFactory<MapDigraph<V, E>> getDefaultDigraphFactory() {
-		return getMapDigraphFactory(MapDigraph.<V,E>getDefaultVertexMapFactory(null), MapDigraph.<V,E>getDefaultEdgeMapFactory(null));
+	public static <V> DigraphFactory<MapDigraph<V>> getDefaultDigraphFactory() {
+		return getMapDigraphFactory(MapDigraph.<V>getDefaultVertexMapFactory(null), MapDigraph.<V>getDefaultEdgeMapFactory(null));
 	}
 
 	/**
@@ -45,13 +44,13 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	 * @param edgeMapFactory factory to create edge-target --> edge-value maps
 	 * @return map digraph factory
 	 */
-	public static <V, E> DigraphFactory<MapDigraph<V, E>> getMapDigraphFactory(
-			final VertexMapFactory<V, E> vertexMapFactory,
-			final EdgeMapFactory<V, E> edgeMapFactory) {
-		return new DigraphFactory<MapDigraph<V, E>>() {
+	public static <V> DigraphFactory<MapDigraph<V>> getMapDigraphFactory(
+			final VertexMapFactory<V> vertexMapFactory,
+			final EdgeMapFactory<V> edgeMapFactory) {
+		return new DigraphFactory<MapDigraph<V>>() {
 			@Override
-			public MapDigraph<V, E> create() {
-				return new MapDigraph<V, E>(vertexMapFactory, edgeMapFactory);
+			public MapDigraph<V> create() {
+				return new MapDigraph<V>(vertexMapFactory, edgeMapFactory);
 			}
 		};
 	}
@@ -59,52 +58,52 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	/**
 	 * Vertex map factory (vertex to edge map).
 	 */
-	public static interface VertexMapFactory<V, E> {
-		public Map<V, Map<V, E>> create();
+	public static interface VertexMapFactory<V> {
+		public Map<V, Map<V, Integer>> create();
 	}
 
 	/**
 	 * Edge map factory (edge target to edge value).
 	 */
-	public static interface EdgeMapFactory<V, E> {
-		public Map<V, E> create(V source);
+	public static interface EdgeMapFactory<V> {
+		public Map<V, Integer> create(V source);
 	}
 
-	private static final <V, E> VertexMapFactory<V, E> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
-		return new VertexMapFactory<V, E>() {
+	private static final <V> VertexMapFactory<V> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
+		return new VertexMapFactory<V>() {
 			@Override
-			public Map<V, Map<V, E>> create() {
+			public Map<V, Map<V, Integer>> create() {
 				if (comparator == null) {
-					return new LinkedHashMap<V, Map<V, E>>(16);
+					return new LinkedHashMap<V, Map<V, Integer>>(16);
 				} else {
-					return new TreeMap<V, Map<V, E>>(comparator);
+					return new TreeMap<V, Map<V, Integer>>(comparator);
 				}
 			}
 		};
 	};
 
-	private static final <V, E> EdgeMapFactory<V, E> getDefaultEdgeMapFactory(final Comparator<? super V> comparator) {
-		return new EdgeMapFactory<V, E>() {
+	private static final <V> EdgeMapFactory<V> getDefaultEdgeMapFactory(final Comparator<? super V> comparator) {
+		return new EdgeMapFactory<V>() {
 			@Override
-			public Map<V, E> create(V ignore) {
+			public Map<V, Integer> create(V ignore) {
 				if (comparator == null) {
-					return new LinkedHashMap<V, E>(16);
+					return new LinkedHashMap<V, Integer>(16);
 				} else {
-					return new TreeMap<V, E>(comparator);
+					return new TreeMap<V, Integer>(comparator);
 				}
 			}
 		};
 	};
 
-	private final VertexMapFactory<V, E> vertexMapFactory;
-	private final EdgeMapFactory<V, E> edgeMapFactory;
-	private final Map<V, Map<V, E>> vertexMap;
+	private final VertexMapFactory<V> vertexMapFactory;
+	private final EdgeMapFactory<V> edgeMapFactory;
+	private final Map<V, Map<V, Integer>> vertexMap;
 
 	private int edgeCount;
 
 	/**
 	 * Create digraph.
-	 * {@link HashMap}s will be used as vertex/edge maps.
+	 * {@link LinkedHashMap}s will be used as vertex/edge maps.
 	 * Vertices and edge targets will be iterated in no particular order. 
 	 */
 	public MapDigraph() {
@@ -131,7 +130,7 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	 * @param edgeComparator
 	 */
 	public MapDigraph(final Comparator<? super V> vertexComparator, final Comparator<? super V> edgeComparator) {
-		this(MapDigraph.<V, E> getDefaultVertexMapFactory(vertexComparator), MapDigraph.<V, E> getDefaultEdgeMapFactory(edgeComparator));
+		this(MapDigraph.<V> getDefaultVertexMapFactory(vertexComparator), MapDigraph.<V> getDefaultEdgeMapFactory(edgeComparator));
 	}
 
 	/**
@@ -139,7 +138,7 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	 * @param vertexMapFactory factory to create vertex --> edge-map maps
 	 * @param edgeMapFactory factory to create edge-target --> edge-value maps
 	 */
-	public MapDigraph(VertexMapFactory<V, E> vertexMapFactory, EdgeMapFactory<V, E> edgeMapFactory) {
+	public MapDigraph(VertexMapFactory<V> vertexMapFactory, EdgeMapFactory<V> edgeMapFactory) {
 		this.vertexMapFactory = vertexMapFactory;
 		this.edgeMapFactory = edgeMapFactory;
 
@@ -149,52 +148,60 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	@Override
 	public boolean add(V vertex) {
 		if (!vertexMap.containsKey(vertex)) {
-			vertexMap.put(vertex, Collections.<V, E> emptyMap());
+			vertexMap.put(vertex, Collections.emptyMap());
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public E put(V source, V target, E edge) {
-		Map<V, E> edgeMap = vertexMap.get(source);
+	public int put(V source, V target, int weight) {
+		Map<V, Integer> edgeMap = vertexMap.get(source);
+
 		if (edgeMap == null || edgeMap.isEmpty()) {
 			vertexMap.put(source, edgeMap = edgeMapFactory.create(source));
 		}
-		E result = edgeMap.put(target, edge);
+
+		Integer result = edgeMap.put(target, weight);
+
 		if (result == null) {
 			add(target);
 			edgeCount++;
 		}
-		return result;
+
+		return result == null ? 0 : result;
 	}
 
 	@Override
-	public E get(Object source, Object target) {
-		Map<V, E> edgeMap = vertexMap.get(source);
+	public int get(V source, V target) {
+		Map<V, Integer> edgeMap = vertexMap.get(source);
+
 		if (edgeMap == null) {
-			return null;
+			return 0;
 		}
-		return edgeMap.get(target);
+
+		Integer result = edgeMap.get(target);
+
+		return result == null ? 0 : result;
 	}
 
 	@Override
-	public E remove(V source, V target) {
-		Map<V, E> edgeMap = vertexMap.get(source);
+	public int remove(V source, V target) {
+		Map<V, Integer> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || !edgeMap.containsKey(target)) {
-			return null;
+			return 0;
 		}
-		E result = edgeMap.remove(target);
+		Integer result = edgeMap.remove(target);
 		edgeCount--;
 		if (edgeMap.isEmpty()) {
-			vertexMap.put(source, Collections.<V, E> emptyMap());
+			vertexMap.put(source, Collections.emptyMap());
 		}
-		return result;
+		return result == null ? 0 : result;
 	}
 
 	@Override
 	public boolean remove(V vertex) {
-		Map<V, E> edgeMap = vertexMap.get(vertex);
+		Map<V, Integer> edgeMap = vertexMap.get(vertex);
 		if (edgeMap == null) {
 			return false;
 		}
@@ -209,14 +216,14 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	@Override
 	public void removeAll(Collection<V> vertices) {
 		for (V vertex : vertices) {
-			Map<V, E> edgeMap = vertexMap.get(vertex);
+			Map<V, Integer> edgeMap = vertexMap.get(vertex);
 			if (edgeMap != null) {
 				edgeCount -= edgeMap.size();
 				vertexMap.remove(vertex);
 			}
 		}
 		for (V source : vertexMap.keySet()) {
-			Map<V, E> edgeMap = vertexMap.get(source);
+			Map<V, Integer> edgeMap = vertexMap.get(source);
 			Iterator<V> iter = edgeMap.keySet().iterator();
 			while (iter.hasNext()) {
 				if (vertices.contains(iter.next())) {
@@ -225,14 +232,14 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 				}
 			}
 			if (edgeMap.isEmpty()) {
-				vertexMap.put(source, Collections.<V, E> emptyMap());
+				vertexMap.put(source, Collections.emptyMap());
 			}
 		}
 	}
 
 	@Override
 	public boolean contains(Object source, Object target) {
-		Map<V, E> edgeMap = vertexMap.get(source);
+		Map<V, Integer> edgeMap = vertexMap.get(source);
 		if (edgeMap == null) {
 			return false;
 		}
@@ -268,7 +275,7 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 
 					@Override
 					public void remove() {
-						Map<V, E> edgeMap = vertexMap.get(vertex);
+						Map<V, Integer> edgeMap = vertexMap.get(vertex);
 						delegate.remove();
 						edgeCount -= edgeMap.size();
 						for (V source : vertexMap.keySet()) {
@@ -287,7 +294,7 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 
 	@Override
 	public Iterable<V> targets(final Object source) {
-		final Map<V, E> edgeMap = vertexMap.get(source);
+		final Map<V, Integer> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || edgeMap.isEmpty()) {
 			return Collections.emptySet();
 		}
@@ -314,7 +321,7 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 						if (edgeMap.isEmpty()) {
 							@SuppressWarnings("unchecked")
 							V v = (V) source;
-							vertexMap.put(v, Collections.<V, E> emptyMap());
+							vertexMap.put(v, Collections.emptyMap());
 						}
 					}
 				};
@@ -333,8 +340,21 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 	}
 
 	@Override
+	public int totalWeight() {
+		int weight = 0;
+
+		for (V source : vertices()) {
+			for (V target : targets(source)) {
+				weight += get(source, target);
+			}
+		}
+
+		return weight;
+	}
+
+	@Override
 	public int getOutDegree(Object vertex) {
-		Map<V, E> edgeMap = vertexMap.get(vertex);
+		Map<V, Integer> edgeMap = vertexMap.get(vertex);
 		if (edgeMap == null) {
 			return 0;
 		}
@@ -346,23 +366,23 @@ public class MapDigraph<V, E> implements Digraph<V, E> {
 		return edgeCount;
 	}
 
-	public DigraphFactory<? extends MapDigraph<V, E>> getDigraphFactory() {
-		return new DigraphFactory<MapDigraph<V, E>>() {
+	public DigraphFactory<? extends MapDigraph<V>> getDigraphFactory() {
+		return new DigraphFactory<MapDigraph<V>>() {
 			@Override
-			public MapDigraph<V, E> create() {
-				return new MapDigraph<V, E>(vertexMapFactory, edgeMapFactory);
+			public MapDigraph<V> create() {
+				return new MapDigraph<V>(vertexMapFactory, edgeMapFactory);
 			}
 		};
 	}
 
 	@Override
-	public MapDigraph<V, E> reverse() {
-		return Digraphs.<V, E, MapDigraph<V, E>> reverse(this, getDigraphFactory());
+	public MapDigraph<V> reverse() {
+		return Digraphs.<V, MapDigraph<V>> reverse(this, getDigraphFactory());
 	}
 
 	@Override
-	public MapDigraph<V, E> subgraph(Set<V> vertices) {
-		return Digraphs.<V, E, MapDigraph<V, E>> subgraph(this, vertices, getDigraphFactory());
+	public MapDigraph<V> subgraph(Set<V> vertices) {
+		return Digraphs.<V, MapDigraph<V>> subgraph(this, vertices, getDigraphFactory());
 	}
 
 	@Override

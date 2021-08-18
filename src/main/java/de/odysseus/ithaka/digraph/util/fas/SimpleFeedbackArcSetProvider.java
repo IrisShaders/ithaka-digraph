@@ -55,8 +55,8 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	 * @param weights edge weights
 	 * @return list of copies
 	 */
-	private <V,E> List<Digraph<V,E>> copies(Digraph<V,E> digraph, int count) {
-		List<Digraph<V,E>> copies = new ArrayList<Digraph<V,E>>();
+	private <V> List<Digraph<V>> copies(Digraph<V> digraph, int count) {
+		List<Digraph<V>> copies = new ArrayList<Digraph<V>>();
 		copies.add(digraph);
 
 		final List<Integer> shuffle = new ArrayList<Integer>();
@@ -70,11 +70,11 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		Random random = new Random(7);
 		for (int i = 0; i < count; i++) {
 			Collections.shuffle(shuffle, random);
-			copies.add(Digraphs.copy(digraph, new DigraphFactory<Digraph<V,E>>() {
+			copies.add(Digraphs.copy(digraph, new DigraphFactory<Digraph<V>>() {
 				List<Integer> index = new ArrayList<Integer>(shuffle);
 				@Override
-				public Digraph<V, E> create() {
-					return new MapDigraph<V, E>(new Comparator<V>() {
+				public Digraph<V> create() {
+					return new MapDigraph<V>(new Comparator<V>() {
 						@Override
 						public int compare(V v1, V v2) {
 							int value1 = index.get(order.get(v1));
@@ -97,7 +97,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	 * @return feedback arc set
 	 */
 	@Override
-	protected <V,E> Digraph<V,E> lfas(Digraph<V,E> tangle, EdgeWeights<? super V> weights) {
+	protected <V> Digraph<V> lfas(Digraph<V> tangle, EdgeWeights<? super V> weights) {
 		/*
 		 * store best results
 		 */
@@ -113,11 +113,11 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		/*
 		 * perform DFS for each node, keep best result
 		 */
-		List<Digraph<V,E>> copies = copies(tangle, Math.min(10, tangle.getVertexCount()));		
+		List<Digraph<V>> copies = copies(tangle, Math.min(10, tangle.getVertexCount()));		
 		List<V> finished = new ArrayList<V>(tangle.getVertexCount());
 		Set<V> discovered = new HashSet<V>(tangle.getVertexCount());
 		for (V start : tangle.vertices()) {
-			for (Digraph<V, E> copy : copies) {
+			for (Digraph<V> copy : copies) {
 				finished.clear();
 				discovered.clear();
 				Digraphs.dfs(copy, start, discovered, finished);
@@ -152,7 +152,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		/*
 		 * create feedback graph
 		 */
-		Digraph<V, E> feedback = MapDigraph.<V, E>getDefaultDigraphFactory().create();
+		Digraph<V> feedback = MapDigraph.<V>getDefaultDigraphFactory().create();
 		discovered.clear();
 		for (V source : minFinished) {
 			discovered.add(source);

@@ -25,11 +25,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.odysseus.ithaka.digraph.DigraphProvider;
-import de.odysseus.ithaka.digraph.SimpleDigraph;
-import de.odysseus.ithaka.digraph.SimpleDigraphAdapter;
-import de.odysseus.ithaka.digraph.io.dot.DotAttribute;
-import de.odysseus.ithaka.digraph.io.dot.DotExporter;
-import de.odysseus.ithaka.digraph.io.dot.DotProvider;
 
 public class DotExporterTest {
 	@Test

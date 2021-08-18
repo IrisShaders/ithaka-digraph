@@ -33,7 +33,7 @@ public class TGFExporter {
 		this.newline = newline;
 	}
 	
-	public <V, E> void export(
+	public <V> void export(
 			TGFProvider<? super V, ? super E> provider,
 			Digraph<? extends V, ? extends E> digraph,
 			Writer writer) throws IOException {

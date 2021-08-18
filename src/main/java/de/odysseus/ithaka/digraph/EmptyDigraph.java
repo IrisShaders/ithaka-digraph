@@ -24,9 +24,8 @@ import java.util.Set;
  * Adding a vertex or edge will throw a <code>UnsupportedOperationException</code>.
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
-class EmptyDigraph<V,E> implements DoubledDigraph<V,E> {
+class EmptyDigraph<V> implements DoubledDigraph<V> {
 	@Override
 	public boolean add(Object vertex) {
 		throw new UnsupportedOperationException("Empty digraph cannot have vertices!");
@@ -43,8 +42,8 @@ class EmptyDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 
 	@Override
-	public E get(Object source, Object target) {
-		return null;
+	public int get(Object source, Object target) {
+		return 0;
 	}
 
 	@Override
@@ -68,18 +67,23 @@ class EmptyDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 
 	@Override
+	public int totalWeight() {
+		return 0;
+	}
+
+	@Override
 	public Iterable<V> vertices() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public E put(Object source, Object target, Object edge) {
+	public int put(V source,V target, int edgeWeight) {
 		throw new UnsupportedOperationException("Empty digraph cannot have edges!");
 	}
 
 	@Override
-	public E remove(Object source, Object target) {
-		return null;
+	public int remove(V source, V target) {
+		return 0;
 	}
 
 	@Override
@@ -92,12 +96,12 @@ class EmptyDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 	
 	@Override
-	public DoubledDigraph<V,E> reverse() {
+	public DoubledDigraph<V> reverse() {
 		return this;
 	}
 	
 	@Override
-	public Digraph<V, E> subgraph(Set<V> vertices) {
+	public Digraph<V> subgraph(Set<V> vertices) {
 		return this;
 	}
 

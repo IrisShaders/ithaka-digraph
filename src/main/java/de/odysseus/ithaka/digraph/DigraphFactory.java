@@ -19,10 +19,10 @@ package de.odysseus.ithaka.digraph;
  * Digraph factory interface.
  * @param <G> digraph type
  */
-public interface DigraphFactory<G extends Digraph<?,?>> {
+public interface DigraphFactory<G extends Digraph<?>> {
 	/**
 	 * Create a digraph.
 	 * @return digraph
 	 */
-	public G create();
+	G create();
 }

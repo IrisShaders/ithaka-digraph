@@ -25,11 +25,6 @@ import org.junit.Test;
 import de.odysseus.ithaka.digraph.Digraph;
 import de.odysseus.ithaka.digraph.Digraphs;
 import de.odysseus.ithaka.digraph.EdgeWeights;
-import de.odysseus.ithaka.digraph.WeightedDigraph;
-import de.odysseus.ithaka.digraph.WeightedDigraphAdapter;
-import de.odysseus.ithaka.digraph.util.fas.AbstractFeedbackArcSetProvider;
-import de.odysseus.ithaka.digraph.util.fas.FeedbackArcSet;
-import de.odysseus.ithaka.digraph.util.fas.FeedbackArcSetPolicy;
 
 public class AbstractFeedbackArcSetProviderTest {
 	@Test
@@ -40,7 +35,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
 			@Override
-			protected <V, E> Digraph<V, E> lfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.assertTrue(digraph == graph);
 				Assert.assertTrue(weights == graph);
 				return digraph;
@@ -61,7 +56,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
 			@Override
-			protected <V, E> Digraph<V, E> lfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.assertTrue(digraph == graph);
 				for (V source : digraph.vertices()) {
 					for (V target : digraph.targets(source)) {
@@ -90,7 +85,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(0) { // current thread
 			@Override
-			protected <V, E> Digraph<V, E> lfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.assertFalse(digraph == graph);
 				Assert.assertTrue(weights == graph);
 				return digraph;
@@ -116,7 +111,7 @@ public class AbstractFeedbackArcSetProviderTest {
 		final List<Thread> threads = new ArrayList<Thread>();
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(2) { // two threads
 			@Override
-			protected <V, E> Digraph<V, E> lfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				threads.add(Thread.currentThread());
 				try {
 					Thread.sleep(30);
@@ -144,12 +139,12 @@ public class AbstractFeedbackArcSetProviderTest {
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(0) {
 			@Override
-			public <V, E> FeedbackArcSet<V, E> mfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			public <V> FeedbackArcSet<V> mfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.fail();
 				return null;
 			}
 			@Override
-			protected <V, E> Digraph<V, E> lfas(Digraph<V, E> digraph, EdgeWeights<? super V> weights) {
+			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.fail();
 				return null;
 			}

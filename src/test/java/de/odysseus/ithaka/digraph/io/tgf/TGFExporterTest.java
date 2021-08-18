@@ -21,13 +21,6 @@ import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.odysseus.ithaka.digraph.SimpleDigraph;
-import de.odysseus.ithaka.digraph.SimpleDigraphAdapter;
-import de.odysseus.ithaka.digraph.WeightedDigraph;
-import de.odysseus.ithaka.digraph.WeightedDigraphAdapter;
-import de.odysseus.ithaka.digraph.io.tgf.TGFExporter;
-import de.odysseus.ithaka.digraph.io.tgf.TGFProvider;
-
 public class TGFExporterTest {
 	@Test
 	public void testSimple() throws IOException {

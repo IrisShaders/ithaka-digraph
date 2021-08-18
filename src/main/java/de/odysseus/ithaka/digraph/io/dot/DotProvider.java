@@ -17,7 +17,7 @@ package de.odysseus.ithaka.digraph.io.dot;
 
 import de.odysseus.ithaka.digraph.Digraph;
 
-public interface DotProvider<V, E, G extends Digraph<? extends V, ? extends E>> {
+public interface DotProvider<V, G extends Digraph<? extends V, ? extends E>> {
 	public Iterable<DotAttribute> getDefaultGraphAttributes(G digraph);
 	public Iterable<DotAttribute> getDefaultNodeAttributes(G digraph);
 	public Iterable<DotAttribute> getDefaultEdgeAttributes(G digraph);

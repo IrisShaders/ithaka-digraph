@@ -27,37 +27,35 @@ import java.util.Set;
  * @author beck
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
-public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
+public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	/**
 	 * Answer a factory which creates empty trivial digraphs.
 	 * @param <V> vertex type
-	 * @param <E> edge type
 	 * @return trivial digraph factory
 	 */
-	public static <V,E> DigraphFactory<TrivialDigraph<V,E>> getDigraphFactory() {
-		return new DigraphFactory<TrivialDigraph<V,E>>() {
+	public static <V> DigraphFactory<TrivialDigraph<V>> getDigraphFactory() {
+		return new DigraphFactory<TrivialDigraph<V>>() {
 			@Override
-			public TrivialDigraph<V,E> create() {
-				return new TrivialDigraph<V,E>();
+			public TrivialDigraph<V> create() {
+				return new TrivialDigraph<V>();
 			}
 		};
 	}
 
 	private V vertex;
-	private E loop;
+	private int loopWeight;
 
 	public TrivialDigraph() {
 	}
 
 	public TrivialDigraph(V vertex) {
-		this(vertex, null);
+		this(vertex, 0);
 	}
 	
-	public TrivialDigraph(V vertex, E loop) {
+	public TrivialDigraph(V vertex, int loopWeight) {
 		this.vertex = vertex;
-		this.loop = loop;
+		this.loopWeight = loopWeight;
 	}
 	
 	/**
@@ -67,21 +65,24 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 	@Override
 	public boolean add(V vertex) {
 		if (vertex == null) {
-			throw new IllegalArgumentException("Cannot add vertex null!");
+			throw new IllegalArgumentException("Cannot add null vertex!");
 		}
+
 		if (this.vertex == null) {
 			this.vertex = vertex;
 			return true;
 		}
+
 		if (this.vertex.equals(vertex)) {
 			return false;
 		}
+
 		throw new UnsupportedOperationException("TrivialDigraph must contain at most one vertex!");
 	}
 
 	@Override
 	public boolean contains(Object source, Object target) {
-		return vertex != null && loop != null && vertex.equals(source) && vertex.equals(target);
+		return vertex != null && loopWeight != 0 && vertex.equals(source) && vertex.equals(target);
 	}
 
 	@Override
@@ -90,28 +91,33 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 
 	@Override
-	public E get(Object source, Object target) {
-		return contains(source, target) ? loop : null;
+	public int get(Object source, Object target) {
+		return contains(source, target) ? loopWeight : null;
 	}
 
 	@Override
 	public int getInDegree(Object vertex) {
-		return loop == null ? 0 : 1;
+		return loopWeight == 0 ? 0 : 1;
 	}
 
 	@Override
 	public int getOutDegree(Object vertex) {
-		return loop == null ? 0 : 1;
+		return loopWeight == 0 ? 0 : 1;
 	}
 
 	@Override
 	public int getEdgeCount() {
-		return loop == null ? 0 : 1;
+		return loopWeight == 0 ? 0 : 1;
 	}
 	
 	@Override
 	public int getVertexCount() {
 		return vertex == null ? 0 : 1;
+	}
+
+	@Override
+	public int totalWeight() {
+		return loopWeight;
 	}
 
 	@Override
@@ -153,36 +159,37 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 
 	@Override
-	public E put(V source, V target, E edge) {
-		if (edge == null) {
-			throw new IllegalArgumentException("Cannot add edge null!");
-		}
+	public int put(V source, V target, int loopWeight) {
 		if (source != target) {
 			throw new UnsupportedOperationException("TrivialDigraph must not contain no-loop edges!");
 		}
-		E result = loop;
+
+		int previousLoopWeight = this.loopWeight;
 		add(source);
-		loop = edge;
-		return result;
+		this.loopWeight = loopWeight;
+
+		return previousLoopWeight;
 	}
 
 	@Override
-	public E remove(V source, V target) {
+	public int remove(V source, V target) {
 		if (contains(source, target)) {
-			E result = loop;
-			loop = null;
-			return result;
+			int loopWeight = this.loopWeight;
+			this.loopWeight = 0;
+			return loopWeight;
 		}
-		return null;
+
+		return 0;
 	}
 
 	@Override
 	public boolean remove(V vertex) {
 		if (this.vertex != null && this.vertex.equals(vertex)) {
 			this.vertex = null;
-			loop = null;
+			loopWeight = 0;
 			return true;
 		}
+
 		return false;
 	}
 
@@ -194,13 +201,13 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 	}
 
 	@Override
-	public DoubledDigraph<V,E> reverse() {
+	public DoubledDigraph<V> reverse() {
 		return this;
 	}
 	
 	@Override
-	public Digraph<V, E> subgraph(Set<V> vertices) {
-		return vertex != null && vertices.contains(vertex) ? this : Digraphs.<V,E>emptyDigraph();
+	public Digraph<V> subgraph(Set<V> vertices) {
+		return vertex != null && vertices.contains(vertex) ? this : Digraphs.emptyDigraph();
 	}
 
 	@Override
@@ -210,7 +217,7 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 
 	@Override
 	public Iterable<V> targets(Object source) {
-		if (loop == null || vertex == null || !vertex.equals(source)) {
+		if (loopWeight == 0 || vertex == null || !vertex.equals(source)) {
 			return Collections.emptyList();
 		}
 		return new Iterable<V>() {
@@ -248,6 +255,6 @@ public class TrivialDigraph<V,E> implements DoubledDigraph<V,E> {
 	
 	@Override
 	public boolean isAcyclic() {
-		return loop == null;
+		return loopWeight == 0;
 	}
 }

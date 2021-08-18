@@ -33,8 +33,8 @@ public class Digraphs {
 	 * Get an unmodifiable empty digraph.
 	 * @return empty digraph
 	 */
-	public static <V,E> DoubledDigraph<V,E> emptyDigraph() {
-		return new EmptyDigraph<V,E>();
+	public static <V> DoubledDigraph<V> emptyDigraph() {
+		return new EmptyDigraph<V>();
 	}
 
 	/**
@@ -42,12 +42,11 @@ public class Digraphs {
 	 * is called on the resulting digraph that could modify the underlying
 	 * digraph, an exception is thrown.
 	 * @param <V> vertex type
-	 * @param <E> edge type
 	 * @param digraph
 	 * @return unmodifiable digraph equivalent to the given digraph
 	 */
-	public static <V,E> Digraph<V,E> unmodifiableDigraph(Digraph<V,E> digraph) {
-		return new UnmodifiableDigraph<V, E>(digraph);
+	public static <V> Digraph<V> unmodifiableDigraph(Digraph<V> digraph) {
+		return new UnmodifiableDigraph<V>(digraph);
 	}
 
 	/**
@@ -62,7 +61,7 @@ public class Digraphs {
 	 * @param descending let edges go from right to left if <code>true</code>
 	 * @return list of vertices toplologically ordered.
 	 */
-	public static <V> List<V> topsort(Digraph<V,?> digraph, boolean descending) {
+	public static <V> List<V> topsort(Digraph<V> digraph, boolean descending) {
 		List<V> finished = new ArrayList<V>();
 		Set<V> discovered = new HashSet<V>(digraph.getVertexCount());
 		for (V vertex : digraph.vertices()) {
@@ -83,7 +82,7 @@ public class Digraphs {
 	 * @param source source vertex
 	 * @return the set of vertices reachable from <code>source</code>
 	 */
-	public static <V> Set<V> closure(Digraph<V,?> digraph, V source) {
+	public static <V> Set<V> closure(Digraph<V> digraph, V source) {
 		Set<V> closure = new HashSet<V>();
 		dfs(digraph, source, closure, closure);
 		return closure;
@@ -96,7 +95,7 @@ public class Digraphs {
 	 * @param digraph
 	 * @return <code>true</code> iff the given digraph is acyclic
 	 */
-	public static <V> boolean isAcyclic(Digraph<V,?> digraph) {
+	public static <V> boolean isAcyclic(Digraph<V> digraph) {
 		int n = digraph.getVertexCount();
 		if (n < 2) {
 			return true; // no self loop
@@ -104,7 +103,7 @@ public class Digraphs {
 		if (digraph.getEdgeCount() > (n*(n-1))/2) {
 			return false;
 		}
-		return Digraphs.<V>scc(digraph).size() == n;
+		return Digraphs.scc(digraph).size() == n;
 	}
 
 	/**
@@ -121,7 +120,7 @@ public class Digraphs {
 	 * @param compareEdges if <code>true</code>, compare edges using <code>equals()</code>.
 	 * @return <code>true</code> iff the two digraphs are equivalent according to the above description.
 	 */
-	public static <V> boolean isEquivalent(Digraph<V,?> first, Digraph<V,?> second, boolean compareEdges) {
+	public static <V> boolean isEquivalent(Digraph<V> first, Digraph<V> second, boolean compareEdges) {
 		if (first == second) {
 			return true;
 		}
@@ -137,9 +136,10 @@ public class Digraphs {
 					return false;
 				}
 				if (compareEdges) {
-					Object edge1 = first.get(source, target);
-					Object edge2 = second.get(source, target);
-					if (edge1 != edge2 && (edge1 == null || edge2 == null || !edge1.equals(edge2))) {
+					int edge1 = first.get(source, target);
+					int edge2 = second.get(source, target);
+
+					if (edge1 != edge2) {
 						return false;
 					}
 				}
@@ -156,7 +156,7 @@ public class Digraphs {
 	 * @param digraph
 	 * @return <code>true</code> iff the given digraph is strongly connected
 	 */
-	public static <V> boolean isStronglyConnected(Digraph<V,?> digraph) {
+	public static <V> boolean isStronglyConnected(Digraph<V> digraph) {
 		int n = digraph.getVertexCount();
 		if (n < 2) {
 			return true;
@@ -173,7 +173,7 @@ public class Digraphs {
 	 * @param target target vertex
 	 * @return <code>true</code> iff there's a path from <code>source</code> to <code>target</code> in <code>digraph</code>
 	 */
-	public static <V> boolean isReachable(Digraph<V,?> digraph, V source, V target) {
+	public static <V> boolean isReachable(Digraph<V> digraph, V source, V target) {
 		return digraph.contains(source, target) || Digraphs.<V>closure(digraph, source).contains(target);
 	}
 
@@ -186,7 +186,7 @@ public class Digraphs {
 	 * @param discovered set of vertices already discovered during search
 	 * @param finished collection of vertices visited during search
 	 */
-	public static <V> void dfs(Digraph<V,?> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
+	public static <V> void dfs(Digraph<V> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
 		if (discovered.add(source)) {
 			for (V target : digraph.targets(source)) {
 				dfs(digraph, target, discovered, finished);
@@ -204,11 +204,11 @@ public class Digraphs {
 	 * @param discovered set of vertices already discovered during search
 	 * @param finished collection of vertices visited during search
 	 */
-	public static <V> void dfs2(Digraph<V,?> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
+	public static <V> void dfs2(Digraph<V> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
 		dfs2(digraph, digraph.reverse(), source, discovered, finished);
 	}
 
-	private static <V> void dfs2(Digraph<V,?> forward, Digraph<V,?> backward, V source, Set<? super V> discovered, Collection<? super V> finished) {
+	private static <V> void dfs2(Digraph<V> forward, Digraph<V> backward, V source, Set<? super V> discovered, Collection<? super V> finished) {
 		if (discovered.add(source)) {
 			for (V target : forward.targets(source)) {
 				dfs2(forward, backward, target, discovered, finished);
@@ -226,9 +226,9 @@ public class Digraphs {
 	 * @param digraph
 	 * @return strongly connected components
 	 */
-	public static <V> List<Set<V>> scc(Digraph<V,?> digraph) {
+	public static <V> List<Set<V>> scc(Digraph<V> digraph) {
 		List<Set<V>> components = new ArrayList<Set<V>>();
-		Digraph<V,?> reverse = digraph.reverse();
+		Digraph<V> reverse = digraph.reverse();
 
 		// dfs on this graph
 		Stack<V> stack = new Stack<V>();
@@ -238,11 +238,11 @@ public class Digraphs {
 		}
 
 		// dfs on reverse graph
-		discovered = new HashSet<V>();
+		discovered = new HashSet<>();
 		while (!stack.isEmpty()) {
 			V vertex = stack.pop();
 			if (!discovered.contains(vertex)) {
-				Set<V> component = new HashSet<V>();
+				Set<V> component = new HashSet<>();
 				dfs(reverse, vertex, discovered, component);
 				components.add(component);
 			}
@@ -257,15 +257,15 @@ public class Digraphs {
 	 * @param digraph
 	 * @return weakly connected components
 	 */
-	public static <V> List<Set<V>> wcc(Digraph<V,?> digraph) {
+	public static <V> List<Set<V>> wcc(Digraph<V> digraph) {
 		List<Set<V>> components = new ArrayList<Set<V>>();
-		Digraph<V,?> reverse = digraph.reverse();
+		Digraph<V> reverse = digraph.reverse();
 
 		// dfs on both graphs
-		Set<V> discovered = new HashSet<V>();
+		Set<V> discovered = new HashSet<>();
 		for (V vertex : digraph.vertices()) {
 			if (!discovered.contains(vertex)) {
-				Set<V> component = new HashSet<V>();
+				Set<V> component = new HashSet<>();
 				dfs2(digraph, reverse, vertex, discovered, component);
 				components.add(component);
 			}
@@ -276,13 +276,12 @@ public class Digraphs {
 	/**
 	 * Compute the reverse graph.
 	 * @param <V> vertex type
-	 * @param <E> edge type
 	 * @param <G> result type
 	 * @param digraph input digraph
 	 * @param factory factory used to create result graph
 	 * @return the reverse digraph
 	 */
-	public static <V,E,G extends Digraph<V, E>> G reverse(Digraph<V,E> digraph, DigraphFactory<? extends G> factory) {
+	public static <V,G extends Digraph<V>> G reverse(Digraph<V> digraph, DigraphFactory<? extends G> factory) {
 		G reverse = factory.create();
 		for (V source : digraph.vertices()) {
 			reverse.add(source);
@@ -299,7 +298,7 @@ public class Digraphs {
 	 * @param factory factory used to create copy
 	 * @return a copy of the given digraph
 	 */
-	public static <V, E, G extends Digraph<V, E>> G copy(Digraph<V, E> digraph, DigraphFactory<? extends G> factory) {
+	public static <V, G extends Digraph<V>> G copy(Digraph<V> digraph, DigraphFactory<? extends G> factory) {
 		G result = factory.create();
 		for (V source : digraph.vertices()) {
 			result.add(source);
@@ -313,15 +312,14 @@ public class Digraphs {
 	/**
 	 * Create subgraph induced by the specified vertices.
 	 * @param <V> vertex type
-	 * @param <E> edge type
 	 * @param <G> subgraph type
 	 * @param digraph
 	 * @param vertices
 	 * @param factory
 	 * @return subgraph of the supplied digraph containing the specified vertices.
 	 */
-	public static <V,E,G extends Digraph<V,E>> G subgraph(
-			Digraph<V,E> digraph,
+	public static <V,G extends Digraph<V>> G subgraph(
+			Digraph<V> digraph,
 			Set<V> vertices,
 			DigraphFactory<? extends G> factory) {
 		G subgraph = factory.create();
@@ -342,22 +340,20 @@ public class Digraphs {
 	 * Create partition graph from a given vertex decomposition.
 	 * @param <G> the type of the component graphs
 	 * @param <P> the type of the result graph
-	 * @param <C> the edge type of the result graph
 	 * @param factory1 used to create the partition graph
 	 * @param factory2 used to create the subgraphs
 	 * @param cumulator used to cumulate edges between subgraphs
 	 * @return a digraph of subgraphs of this digraph
 	 */
-	public static <V,E,G extends Digraph<V,E>,P extends Digraph<G,C>, C> P partition(
-			Digraph<V,E> digraph,
+	public static <V,G extends Digraph<V>,P extends Digraph<G>> P partition(
+			Digraph<V> digraph,
 			Iterable<Set<V>> sets,
 			DigraphFactory<? extends P> factory1,
-			DigraphFactory<? extends G> factory2,
-			EdgeCumulator<? super G,C,? super E> cumulator) {
+			DigraphFactory<? extends G> factory2) {
 		P partition = factory1.create();
 
 		// map vertices to their component graph
-		Map<V,G> vertex2subgraph = new HashMap<V,G>();
+		Map<V,G> vertex2subgraph = new HashMap<>();
 		for (Set<V> set : sets) {
 			G subgraph = subgraph(digraph, set, factory2);
 			for (V v : subgraph.vertices()) {
@@ -374,13 +370,9 @@ public class Digraphs {
 			for (V w : digraph.targets(v)) {
 				G target = vertex2subgraph.get(w);
 				if (source != target) {
-					C cumulatedEdge = null;
-					if (cumulator != null) {
-						E subgraphEdge = digraph.get(v, w);
-						C componentEdge = partition.get(source, target);
-						cumulatedEdge = cumulator.add(source, target, componentEdge, subgraphEdge);
-					}
-					partition.put(source, target, cumulatedEdge);
+					int edgeWeight = partition.get(source, target);
+					edgeWeight += digraph.get(v, w);
+					partition.put(source, target, edgeWeight);
 				}
 			}
 		}

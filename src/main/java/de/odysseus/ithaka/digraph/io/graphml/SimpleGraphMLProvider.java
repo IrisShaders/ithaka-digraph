@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import de.odysseus.ithaka.digraph.Digraph;
 
-public class SimpleGraphMLProvider<V, E, G extends Digraph<? extends V, ? extends E>> implements GraphMLProvider<V, E, G> {
+public class SimpleGraphMLProvider<V, G extends Digraph<? extends V, ? extends E>> implements GraphMLProvider<V, G> {
 	private final ArrayList<GraphMLProperty<G>> graphProperties = new ArrayList<GraphMLProperty<G>>();
 	private final ArrayList<GraphMLProperty<V>> nodeProperties = new ArrayList<GraphMLProperty<V>>();
 	private final ArrayList<GraphMLProperty<E>> edgeProperties = new ArrayList<GraphMLProperty<E>>();

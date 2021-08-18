@@ -25,7 +25,7 @@ import de.odysseus.ithaka.digraph.io.graphml.GraphMLPropertyDomain;
 import de.odysseus.ithaka.digraph.layout.DigraphLayoutArc;
 import de.odysseus.ithaka.digraph.layout.DigraphLayoutPoint;
 
-public class EdgeGraphicsProperty<V, E> extends AbstractGraphicsProperty<DigraphLayoutArc<V, E>> {
+public class EdgeGraphicsProperty<V> extends AbstractGraphicsProperty<DigraphLayoutArc<V>> {
 	private final LabelResolver<? super E> labels;
 
 	public EdgeGraphicsProperty(LabelResolver<? super E> labels, Font font) {
@@ -34,7 +34,7 @@ public class EdgeGraphicsProperty<V, E> extends AbstractGraphicsProperty<Digraph
 	}
 
 	@Override
-	protected void writeDataContent(XMLStreamWriter writer, DigraphLayoutArc<V, E> edge) throws XMLStreamException {
+	protected void writeDataContent(XMLStreamWriter writer, DigraphLayoutArc<V> edge) throws XMLStreamException {
 		// <y:PolyLineEdge>  
 		writer.writeStartElement(getPrefix(), "PolyLineEdge", getNamespaceURI());
 		Iterator<DigraphLayoutPoint> bendPoints = edge.getBendPoints().iterator();

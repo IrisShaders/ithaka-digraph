@@ -69,8 +69,8 @@ public class GraphMLExporter {
 		this.parseInfos = parseInfos;
 	}
 	
-	private <V, E, G extends Digraph<? extends V, ? extends E>> void write(
-			GraphMLProvider<V, E, G> provider,
+	private <V, G extends Digraph<? extends V, ? extends E>> void write(
+			GraphMLProvider<V, G> provider,
 			DigraphProvider<? super V, G> subgraphs,
 			XMLStreamWriter writer,
 			G digraph,
@@ -154,8 +154,8 @@ public class GraphMLExporter {
 		writer.writeEndElement(); // graph
 	}
 
-	public <V, E, G extends Digraph<? extends V, ? extends E>> void export(
-			GraphMLProvider<V, E, G> provider,
+	public <V, G extends Digraph<? extends V, ? extends E>> void export(
+			GraphMLProvider<V, G> provider,
 			G digraph,
 			DigraphProvider<? super V, G> subgraphs,
 			XMLStreamWriter writer) throws XMLStreamException {
