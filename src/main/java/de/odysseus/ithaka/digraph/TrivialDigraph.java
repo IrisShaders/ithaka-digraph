@@ -92,7 +92,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 
 	@Override
 	public int get(Object source, Object target) {
-		return contains(source, target) ? loopWeight : null;
+		return contains(source, target) ? loopWeight : 0;
 	}
 
 	@Override
