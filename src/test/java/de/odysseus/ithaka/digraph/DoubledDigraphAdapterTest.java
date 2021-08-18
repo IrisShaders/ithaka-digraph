@@ -17,6 +17,7 @@ package de.odysseus.ithaka.digraph;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.OptionalInt;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,8 +70,8 @@ public class DoubledDigraphAdapterTest {
 		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar"));
-		Assert.assertEquals(1, digraph.reverse().get("bar", "foo"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.reverse().get("bar", "foo"));
 	}
 
 	@Test

@@ -17,6 +17,7 @@ package de.odysseus.ithaka.digraph;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -66,9 +67,9 @@ public class DigraphAdapterTest {
 	@Test
 	public void testGet() {
 		TestAdapter digraph = new TestAdapter();
-		Assert.assertEquals(0, digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.empty(), digraph.get("foo", "bar"));
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.get("foo", "bar"));
 	}
 
 	@Test
@@ -137,7 +138,7 @@ public class DigraphAdapterTest {
 	public void testPut() {
 		TestAdapter digraph = new TestAdapter();
 
-		Assert.assertEquals(0, digraph.put("foo", "bar", 1));
+		Assert.assertEquals(OptionalInt.empty(), digraph.put("foo", "bar", 1));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 	}
 
@@ -146,7 +147,7 @@ public class DigraphAdapterTest {
 		TestAdapter digraph = new TestAdapter();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 	}
 

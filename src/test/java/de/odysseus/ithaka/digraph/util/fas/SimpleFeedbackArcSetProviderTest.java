@@ -211,9 +211,9 @@ public class SimpleFeedbackArcSetProviderTest {
 		assertEquals(2, fas.getEdgeCount());
 		assertEquals(2, fas.getWeight());
 		assertTrue(fas.contains(2, 3));
-		assertSame(graph.get(2, 3), fas.get(2, 3));
+		assertEquals(graph.get(2, 3), fas.get(2, 3));
 		assertTrue(fas.contains(2, 1));
-		assertSame(graph.get(2, 1), fas.get(2, 1));
+		assertEquals(graph.get(2, 1), fas.get(2, 1));
 		
 		// minimum size fas contains 1->2
 		fas = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_SIZE);
@@ -221,6 +221,6 @@ public class SimpleFeedbackArcSetProviderTest {
 		assertEquals(1, fas.getEdgeCount());
 		assertEquals(3, fas.getWeight());
 		assertTrue(fas.contains(1, 2));
-		assertSame(graph.get(1, 2), fas.get(1, 2));
+		assertEquals(graph.get(1, 2), fas.get(1, 2));
 	}
 }

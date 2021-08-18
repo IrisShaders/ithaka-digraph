@@ -18,6 +18,7 @@ package de.odysseus.ithaka.digraph;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -116,22 +117,22 @@ public class MapDigraphTest {
 	public void testPut() {
 		MapDigraph<String> digraph = new MapDigraph<>();
 
-		Assert.assertEquals(0, digraph.put("foo", "bar", 1));
+		Assert.assertEquals(OptionalInt.empty(), digraph.put("foo", "bar", 1));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 		Assert.assertTrue(digraph.contains("foo"));
 		Assert.assertTrue(digraph.contains("bar"));
 
-		Assert.assertEquals(1, digraph.put("foo", "bar", 2));
+		Assert.assertEquals(OptionalInt.of(1), digraph.put("foo", "bar", 2));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 
-		Assert.assertEquals(2, digraph.put("foo", "bar", 0));
+		Assert.assertEquals(OptionalInt.of(2), digraph.put("foo", "bar", 0));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 
-		Assert.assertEquals(0, digraph.put(null, null, 3));
+		Assert.assertEquals(OptionalInt.empty(), digraph.put(null, null, 3));
 		Assert.assertTrue(digraph.contains(null));
 		Assert.assertTrue(digraph.contains(null, null));
 
-		Assert.assertEquals(0, digraph.put("foo", "foo", 3));
+		Assert.assertEquals(OptionalInt.empty(), digraph.put("foo", "foo", 3));
 		Assert.assertTrue(digraph.contains("foo", "foo"));
 	}
 
@@ -140,18 +141,18 @@ public class MapDigraphTest {
 		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.get("foo", "bar"));
 
 		digraph.put("foo", "bar", 2);
-		Assert.assertEquals(2, digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(2), digraph.get("foo", "bar"));
 
 		digraph.put("foo", "bar", 0);
-		Assert.assertEquals(0, digraph.get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(0), digraph.get("foo", "bar"));
 
 		digraph.put(null, null, 3);
-		Assert.assertEquals(3, digraph.get(null, null));
+		Assert.assertEquals(OptionalInt.of(3), digraph.get(null, null));
 
-		Assert.assertEquals(0, digraph.get("bar", "foo"));
+		Assert.assertEquals(OptionalInt.empty(), digraph.get("bar", "foo"));
 	}
 
 	@Test
@@ -159,22 +160,22 @@ public class MapDigraphTest {
 		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 
 		digraph.put("foo", "bar", 0);
-		Assert.assertEquals(0, digraph.remove("foo", "bar"));
+		Assert.assertEquals(OptionalInt.of(0), digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 
 		digraph.put("foo", "foo", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "foo"));
+		Assert.assertEquals(OptionalInt.of(1), digraph.remove("foo", "foo"));
 		Assert.assertFalse(digraph.contains(null, null));
 
 		digraph.put(null, null, 1);
-		Assert.assertEquals(1, digraph.remove(null, null));
+		Assert.assertEquals(OptionalInt.of(1), digraph.remove(null, null));
 		Assert.assertFalse(digraph.contains(null, null));
 
-		Assert.assertEquals(0, digraph.remove("bar", "foo"));
+		Assert.assertEquals(OptionalInt.empty(), digraph.remove("bar", "foo"));
 	}
 
 	@Test

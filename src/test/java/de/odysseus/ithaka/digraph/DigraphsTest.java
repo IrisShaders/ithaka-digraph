@@ -18,6 +18,7 @@ package de.odysseus.ithaka.digraph;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -396,8 +397,8 @@ public class DigraphsTest {
 			}
 		}
 		Assert.assertTrue(s1 != s2 && s1 != s3 && s2 != s3 && s1 != null && s2 != null && s3 != null);
-		Assert.assertEquals(2, p.get(s1, s2));
-		Assert.assertEquals(1, p.get(s2, s1));
-		Assert.assertEquals(1, p.get(s2, s3));
+		Assert.assertEquals(OptionalInt.of(2), p.get(s1, s2));
+		Assert.assertEquals(OptionalInt.of(1), p.get(s2, s1));
+		Assert.assertEquals(OptionalInt.of(1), p.get(s2, s3));
 	}
 }

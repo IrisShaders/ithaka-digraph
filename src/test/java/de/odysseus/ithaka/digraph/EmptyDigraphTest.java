@@ -18,6 +18,8 @@ package de.odysseus.ithaka.digraph;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.OptionalInt;
+
 public class EmptyDigraphTest {
 
 	@Test(expected=UnsupportedOperationException.class)
@@ -37,7 +39,7 @@ public class EmptyDigraphTest {
 
 	@Test
 	public void testGet() {
-		Assert.assertEquals(0, new EmptyDigraph<>().get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.empty(), new EmptyDigraph<>().get("foo", "bar"));
 	}
 
 	@Test
@@ -72,7 +74,7 @@ public class EmptyDigraphTest {
 
 	@Test
 	public void testRemoveObjectObject() {
-		Assert.assertEquals(0, new EmptyDigraph<>().remove("foo", "bar"));
+		Assert.assertEquals(OptionalInt.empty(), new EmptyDigraph<>().remove("foo", "bar"));
 	}
 
 	@Test

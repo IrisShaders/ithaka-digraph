@@ -16,6 +16,7 @@
 package de.odysseus.ithaka.digraph;
 
 import java.util.HashSet;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -55,7 +56,7 @@ public class TrivialDigraphTest {
 
 	@Test
 	public void testGet() {
-		Assert.assertEquals(0, new TrivialDigraph<>().get("foo", "bar"));
+		Assert.assertEquals(OptionalInt.empty(), new TrivialDigraph<>().get("foo", "bar"));
 	}
 
 	@Test
@@ -97,7 +98,7 @@ public class TrivialDigraphTest {
 
 	@Test
 	public void testRemoveVV() {
-		Assert.assertEquals(0, new TrivialDigraph<>().remove("foo", "bar"));
+		Assert.assertEquals(OptionalInt.empty(), new TrivialDigraph<>().remove("foo", "bar"));
 	}
 
 	@Test

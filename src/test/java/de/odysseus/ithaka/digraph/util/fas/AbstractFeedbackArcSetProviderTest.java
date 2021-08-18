@@ -17,6 +17,7 @@ package de.odysseus.ithaka.digraph.util.fas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 import de.odysseus.ithaka.digraph.MapDigraph;
 import junit.framework.Assert;
@@ -62,9 +63,9 @@ public class AbstractFeedbackArcSetProviderTest {
 				for (V source : digraph.vertices()) {
 					for (V target : digraph.targets(source)) {
 						if (Integer.valueOf(1).equals(source)) {
-							Assert.assertEquals(7, weights.get(source, target));
+							Assert.assertEquals(OptionalInt.of(7), weights.get(source, target));
 						} else {
-							Assert.assertEquals(5, weights.get(source, target));
+							Assert.assertEquals(OptionalInt.of(5), weights.get(source, target));
 						}
 					}
 				}
