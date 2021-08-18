@@ -31,7 +31,6 @@ import de.odysseus.ithaka.digraph.io.graphml.yfiles.LabelResolver;
 import de.odysseus.ithaka.digraph.io.graphml.yfiles.YFilesGraphML;
 import de.odysseus.ithaka.digraph.layout.DigrpahLayoutBuilder;
 import de.odysseus.ithaka.digraph.layout.sugiyama.SugiyamaBuilder;
-import de.odysseus.staxon.xml.util.PrettyXMLStreamWriter;
 
 public class YFilesGraphMLTest {
 	@Test
@@ -54,7 +53,6 @@ public class YFilesGraphMLTest {
 		
 		StringWriter result = new StringWriter();
 		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(result);
-		writer = new PrettyXMLStreamWriter(writer);
 		graphML.export(writer);
 
 //		System.out.println(result);
@@ -95,7 +93,6 @@ public class YFilesGraphMLTest {
 		
 		StringWriter result = new StringWriter();
 		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(result);
-		writer = new PrettyXMLStreamWriter(writer);
 		graphML.export(writer);
 
 //		System.out.println(result);

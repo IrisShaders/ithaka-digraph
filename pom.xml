@@ -4,12 +4,7 @@
 	<artifactId>ithaka-digraph</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
-	<parent>
-		<groupId>de.odysseus.ithaka</groupId>
-		<artifactId>ithaka-maven</artifactId>
-		<version>2</version>
-	</parent>
+	<groupId>de.odysseus</groupId>
 	
 	<name>Ithaka Digraph</name>
 	<url>http://github.com/beckchr/ithaka-digraph/</url>
@@ -30,58 +25,26 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>8</maven.compiler.release>
 	</properties>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<optimize>true</optimize>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<configuration>
-					<excludeResources>true</excludeResources>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-
-	<repositories>
-	    <repository>
-	        <id>ithaka</id>
-			<name>Ithaka Maven Repository</name>
-			<url>http://beckchr.github.com/ithaka-maven/mvnrepo/</url>
-	    </repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.odysseus.staxon</groupId>
-			<artifactId>staxon</artifactId>
-			<version>1.0</version>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
