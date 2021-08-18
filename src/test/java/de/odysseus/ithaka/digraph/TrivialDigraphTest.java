@@ -92,7 +92,7 @@ public class TrivialDigraphTest {
 
 	@Test(expected=UnsupportedOperationException.class)
 	public void testPut() {
-		new TrivialDigraph<Object>().put("foo", "bar", 2);
+		new TrivialDigraph<>().put("foo", "bar", 2);
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class TrivialDigraphTest {
 	public void testRemoveAll() {
 		TrivialDigraph<Object> g = new TrivialDigraph<>();
 		g.add("foo");
-		HashSet<Object> set = new HashSet<Object>();
+		HashSet<Object> set = new HashSet<>();
 		set.add("bar");
 		g.removeAll(set);
 		Assert.assertTrue(g.contains("foo"));
@@ -132,7 +132,7 @@ public class TrivialDigraphTest {
 	@Test
 	public void testSubgraph() {
 		TrivialDigraph<Object> g = new TrivialDigraph<>();
-		Set<Object> set = new HashSet<Object>();
+		Set<Object> set = new HashSet<>();
 		set.add("foo");
 		Assert.assertEquals(0, g.subgraph(set).getVertexCount());
 		g.add("foo");

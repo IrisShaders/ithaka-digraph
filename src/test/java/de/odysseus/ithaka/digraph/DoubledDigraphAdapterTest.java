@@ -25,7 +25,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testAdd() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.add("foo");
 		Assert.assertTrue(digraph.contains("foo"));
@@ -34,7 +34,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testvertices() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		digraph.add("foo");
 		digraph.add("bar");
 		digraph.add("foobar");
@@ -50,7 +50,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testNodes2() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		digraph.add("foo");
 		digraph.add("bar");
 		digraph.add("foobar");
@@ -66,16 +66,16 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testPut() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar").intValue());
-		Assert.assertEquals(1, digraph.reverse().get("bar", "foo").intValue());
+		Assert.assertEquals(1, digraph.get("foo", "bar"));
+		Assert.assertEquals(1, digraph.reverse().get("bar", "foo"));
 	}
 
 	@Test
 	public void testRemoveVV() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.put("foo", "bar", 1);
 		digraph.remove("foo", "bar");
@@ -85,7 +85,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testRemoveV() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.add("foo");
 		digraph.remove("foo");
@@ -95,14 +95,14 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testRemoveAll() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 
 		digraph.put("a", "a", 1);
 		digraph.put("a", "b", 2);
 		digraph.put("a", "c", 3);
 		digraph.put("b", "a", 4);
 
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		set.add("a");
 		set.add("b");
 		digraph.removeAll(set);
@@ -122,7 +122,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testTargets() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -148,18 +148,18 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testGetAdapterFactory() {
-		DigraphFactory<MapDigraph<String,Integer>> factory = MapDigraph.getDefaultDigraphFactory();
-		Assert.assertNotNull(DoubledDigraphAdapter.<String,Integer>getAdapterFactory(factory).create());
+		DigraphFactory<MapDigraph<String>> factory = MapDigraph.getDefaultDigraphFactory();
+		Assert.assertNotNull(DoubledDigraphAdapter.getAdapterFactory(factory).create());
 	}
 
 	@Test
 	public void testGetDigraphFactory() {
-		Assert.assertNotNull(new DoubledDigraphAdapter<String,Integer>().getDigraphFactory().create());
+		Assert.assertNotNull(new DoubledDigraphAdapter<String>().getDigraphFactory().create());
 	}
 
 	@Test
 	public void testGetInDegree() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -178,7 +178,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testSources() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -197,7 +197,7 @@ public class DoubledDigraphAdapterTest {
 
 	@Test
 	public void testReverse() {
-		DoubledDigraphAdapter<String,Integer> digraph = new DoubledDigraphAdapter<String,Integer>();
+		DoubledDigraphAdapter<String> digraph = new DoubledDigraphAdapter<>();
 		Assert.assertNotSame(digraph, digraph.reverse());
 		Assert.assertSame(digraph, digraph.reverse().reverse());
 	}
