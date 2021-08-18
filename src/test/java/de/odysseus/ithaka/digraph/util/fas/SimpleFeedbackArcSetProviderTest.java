@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Formatter;
 import java.util.Random;
 
+import de.odysseus.ithaka.digraph.MapDigraph;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -31,22 +32,25 @@ import de.odysseus.ithaka.digraph.Digraph;
 import de.odysseus.ithaka.digraph.EdgeWeights;
 
 public class SimpleFeedbackArcSetProviderTest {
-	private SimpleDigraphAdapter<Integer> randomGraph(Random rng, int nodeCount, int arcCount) {
+	private Digraph<Integer> randomGraph(Random rng, int nodeCount, int arcCount) {
 		if (arcCount > nodeCount * (nodeCount - 1)) {
 			throw new IllegalArgumentException("Too many arcs!");
 		}
-		SimpleDigraphAdapter<Integer> graph = new SimpleDigraphAdapter<Integer>();
+
+		Digraph<Integer> graph = new MapDigraph<>();
+
 		while (graph.getEdgeCount() < arcCount) {
 			int source = rng.nextInt(nodeCount);
 			int target = rng.nextInt(nodeCount);
 			if (source != target) {
-				graph.add(source, target);
+				graph.put(source, target, 1);
 			}
-		};
+		}
+
 		return graph;
 	}
 
-	private EdgeWeights<Integer> randomWeights(final Digraph<Integer,?> graph, Random rng, int minWeight, int maxWeight) {
+	private EdgeWeights<Integer> randomWeights(final Digraph<Integer> graph, Random rng, int minWeight, int maxWeight) {
 		int maxNode = 0;
 		for (int node : graph.vertices()) {
 			if (node > maxNode) {
@@ -56,9 +60,9 @@ public class SimpleFeedbackArcSetProviderTest {
 		final int size = maxNode + 1;
 
 		class Weights implements EdgeWeights<Integer> {
-			int[][] values = new int[size][size];
+			final int[][] values = new int[size][size];
 			@Override
-			public Integer get(Integer source, Integer target) {
+			public int get(Integer source, Integer target) {
 				return values[source][target];
 			}
 			@Override public String toString() {
@@ -74,51 +78,58 @@ public class SimpleFeedbackArcSetProviderTest {
 				formatter.close();
 				return result;
 			}
-		};
+		}
+
 		Weights weights = new Weights();
 		for (int source : graph.vertices()) {
 			for (int target : graph.targets(source)) {
 				weights.values[source][target] = minWeight + rng.nextInt(maxWeight + 1 - minWeight);
 			}
 		}
+
 		return weights;
 	}
 
-	private boolean isFeedbackSet(SimpleDigraph<Integer> graph, Digraph<Integer,?> set) {
+	private boolean isFeedbackSet(Digraph<Integer> graph, Digraph<Integer> set) {
 		for (int source : set.vertices()) {
 			for (int target : set.targets(source)){
-				if (!graph.remove(source, target)) {
+				if (graph.remove(source, target) == 0) {
 					return false;
 				}
 			}
 		}
+
 		boolean result = graph.isAcyclic();
+
 		for (int source : set.vertices()) {
 			for (int target : set.targets(source)) {
-				graph.add(source, target);
+				graph.put(source, target, 1);
 			}
 		}
+
 		return result;
 	}
 
-	private <V> int weight(Digraph<V,?> graph, EdgeWeights<V> weights) {
+	private <V> int weight(Digraph<V> graph, EdgeWeights<V> weights) {
 		int weight = 0;
+
 		for (V source : graph.vertices()) {
 			for (V target : graph.targets(source)) {
 				weight += weights.get(source, target);
 			}
 		}
+
 		return weight;
 	}
 
 	private long calculateFeedbackArcSets(Random rng, int nodeCount, int arcCount, int minWeight, int maxWeight) {
 		FeedbackArcSetProvider simpleProvider = new SimpleFeedbackArcSetProvider();
-		SimpleDigraph<Integer> graph = randomGraph(rng, nodeCount, arcCount);
+		Digraph<Integer> graph = randomGraph(rng, nodeCount, arcCount);
 		EdgeWeights<Integer> weights = randomWeights(graph, rng, minWeight, maxWeight);
 
 		long time = System.currentTimeMillis();
-		Digraph<Integer,?> swfas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_WEIGHT);
-		Digraph<Integer,?> ssfas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_SIZE);
+		Digraph<Integer> swfas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_WEIGHT);
+		Digraph<Integer> ssfas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_SIZE);
 		time = System.currentTimeMillis() - time;
 
 		if (graph.isAcyclic()) {
@@ -142,24 +153,26 @@ public class SimpleFeedbackArcSetProviderTest {
 	@Test
 //	@Ignore
 	public void testThreads() {
-		SimpleDigraphAdapter<Integer> graph = new SimpleDigraphAdapter<Integer>();
+		Digraph<Integer> graph = new MapDigraph<>();
 		int tangleSize = 10;
 		int tangleCount = 4;
+
 		for (int nodeOffset = 0; nodeOffset < tangleCount * tangleSize; nodeOffset += tangleSize) {
 			for (int source = 0; source < tangleSize; source++) {				
 				for (int target = 0; target < tangleSize; target++) {
 					if (source != target) {
-						graph.add(nodeOffset + source, nodeOffset + target);
+						graph.put(nodeOffset + source, nodeOffset + target, 1);
 					}
 				}
 			}
 		}
+
 		Assert.assertEquals(tangleSize * (tangleSize - 1) * tangleCount, graph.getEdgeCount());
 		Assert.assertEquals(tangleSize * tangleCount, graph.getVertexCount());
 		EdgeWeights<Object> weights = EdgeWeights.UNIT_WEIGHTS;
 		for (int threads = tangleCount; threads >= 0; threads--) {
 			SimpleFeedbackArcSetProvider simpleProvider = new SimpleFeedbackArcSetProvider(threads);
-			Digraph<Integer,?> fas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_WEIGHT);
+			Digraph<Integer> fas = simpleProvider.getFeedbackArcSet(graph, weights, FeedbackArcSetPolicy.MIN_WEIGHT);
 			Assert.assertEquals(graph.getVertexCount(), fas.getVertexCount());
 			Assert.assertEquals(graph.getEdgeCount() / 2, fas.getEdgeCount());
 			assertTrue(isFeedbackSet(graph, fas));
@@ -183,13 +196,13 @@ public class SimpleFeedbackArcSetProviderTest {
 	@Test
 	public void testPolicy() {
 		FeedbackArcSetProvider provider = new SimpleFeedbackArcSetProvider();
-		WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 3, 1);
 		graph.put(3, 1, 2);
 		graph.put(2, 1, 1);
 
-		FeedbackArcSet<Integer,?> fas;
+		FeedbackArcSet<Integer> fas;
 		
 		// minimum weight fas contains 2->3, 2->1
 		fas = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);

@@ -18,6 +18,7 @@ package de.odysseus.ithaka.digraph.util.fas;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.odysseus.ithaka.digraph.MapDigraph;
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -29,20 +30,20 @@ import de.odysseus.ithaka.digraph.EdgeWeights;
 public class AbstractFeedbackArcSetProviderTest {
 	@Test
 	public void testMinWeightPolicy() {
-		final WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		final Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
-				Assert.assertTrue(digraph == graph);
-				Assert.assertTrue(weights == graph);
+				Assert.assertSame(digraph, graph);
+				Assert.assertSame(weights, graph);
 				return digraph;
 			}
 		};
 
-		FeedbackArcSet<Integer, Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
+		FeedbackArcSet<Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
 		Assert.assertFalse(feedback.isExact());
 		Assert.assertEquals(4, feedback.getWeight());
 		Assert.assertTrue(Digraphs.isEquivalent(feedback, graph, true));
@@ -50,20 +51,20 @@ public class AbstractFeedbackArcSetProviderTest {
 
 	@Test
 	public void testMinSizePolicy() {
-		final WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		final Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
-				Assert.assertTrue(digraph == graph);
+				Assert.assertSame(digraph, graph);
 				for (V source : digraph.vertices()) {
 					for (V target : digraph.targets(source)) {
 						if (Integer.valueOf(1).equals(source)) {
-							Assert.assertEquals(7, weights.get(source, target).intValue());
+							Assert.assertEquals(7, weights.get(source, target));
 						} else {
-							Assert.assertEquals(5, weights.get(source, target).intValue());
+							Assert.assertEquals(5, weights.get(source, target));
 						}
 					}
 				}
@@ -71,7 +72,7 @@ public class AbstractFeedbackArcSetProviderTest {
 			}
 		};
 
-		FeedbackArcSet<Integer, Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_SIZE);
+		FeedbackArcSet<Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_SIZE);
 		Assert.assertFalse(feedback.isExact());
 		Assert.assertEquals(4, feedback.getWeight());
 		Assert.assertTrue(Digraphs.isEquivalent(feedback, graph, true));
@@ -79,7 +80,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 	@Test
 	public void testDecompose() {
-		final WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		final Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 
@@ -92,7 +93,7 @@ public class AbstractFeedbackArcSetProviderTest {
 			}
 		};
 
-		FeedbackArcSet<Integer, Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
+		FeedbackArcSet<Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
 		Assert.assertFalse(feedback.isExact());
 		Assert.assertEquals(4, feedback.getWeight());
 		Assert.assertTrue(Digraphs.isEquivalent(feedback, graph, true));
@@ -100,7 +101,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 	@Test
 	public void testDecompose2() {
-		final WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		final Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 		graph.put(2, 3, 1);
@@ -124,7 +125,7 @@ public class AbstractFeedbackArcSetProviderTest {
 			}
 		};
 
-		FeedbackArcSet<Integer, Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
+		FeedbackArcSet<Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
 		Assert.assertEquals(2, threads.size());
 		Assert.assertNotSame(threads.get(0), threads.get(1));
 		Assert.assertFalse(feedback.isExact());
@@ -133,7 +134,7 @@ public class AbstractFeedbackArcSetProviderTest {
 
 	@Test
 	public void testAcyclic() {
-		final WeightedDigraph<Integer> graph = new WeightedDigraphAdapter<Integer>();
+		final Digraph<Integer> graph = new MapDigraph<>();
 		graph.put(1, 2, 3);
 		graph.put(2, 3, 1);
 
@@ -150,7 +151,7 @@ public class AbstractFeedbackArcSetProviderTest {
 			}
 		};
 
-		FeedbackArcSet<Integer, Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
+		FeedbackArcSet<Integer> feedback = provider.getFeedbackArcSet(graph, graph, FeedbackArcSetPolicy.MIN_WEIGHT);
 		Assert.assertTrue(feedback.isExact());
 		Assert.assertEquals(0, feedback.getWeight());
 		Assert.assertEquals(0, feedback.getVertexCount());
