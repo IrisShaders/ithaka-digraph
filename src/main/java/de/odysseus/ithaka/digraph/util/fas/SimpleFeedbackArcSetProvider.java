@@ -40,7 +40,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	 * Calculate feedback arc in the current thread.
 	 */
 	public SimpleFeedbackArcSetProvider() {
-		super(true);
+		super();
 	}
 
 	/**

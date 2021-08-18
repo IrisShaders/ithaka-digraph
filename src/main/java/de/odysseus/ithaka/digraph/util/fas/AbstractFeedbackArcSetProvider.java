@@ -19,11 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import de.odysseus.ithaka.digraph.Digraph;
 import de.odysseus.ithaka.digraph.Digraphs;
@@ -53,26 +49,20 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 		}
 	}
 
-	private final boolean decompose;
-	private final int numberOfThreads;
+	private final ExecutorService executor;
 
 	/**
 	 * Create provider which calculates a feedback arc set on a digraph (in the
 	 * current thread).
-	 * If the <code>decompose</code> flag set to <code>true</code>, the provider
-	 * decomposes a digraph into strongly connected components and computes
-	 * feedback arc sets on the components and combines the results.
-	 * If the <code>decompose</code> flag set to <code>false</code>, the
-	 * {@link #mfas(Digraph, EdgeWeights)} and {@link #lfas(Digraph, EdgeWeights)}
-	 * implementation methods must be able to handle arbitrary digraphs or the
-	 * {@link #getFeedbackArcSet(Digraph, EdgeWeights, FeedbackArcSetPolicy)}
-	 * method <em>must</em> be called with strongly connected components only!
 	 *
-	 * @param decompose whether to decompose into strongly connected components.
+	 * The provider decomposes a digraph into strongly connected components and computes
+	 * feedback arc sets on the components and combines the results.
+	 *
+	 * The {@link #mfas(Digraph, EdgeWeights)} and {@link #lfas(Digraph, EdgeWeights)}
+	 * implementation methods do not have to handle arbitrary digraphs for this reason.
 	 */
-	protected AbstractFeedbackArcSetProvider(boolean decompose) {
-		this.decompose = decompose;
-		this.numberOfThreads = 0;
+	protected AbstractFeedbackArcSetProvider() {
+		this.executor = null;
 	}
 
 	/**
@@ -84,8 +74,11 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	 * @param numberOfThreads number
 	 */
 	protected AbstractFeedbackArcSetProvider(int numberOfThreads) {
-		this.decompose = true;
-		this.numberOfThreads = numberOfThreads;
+		if (numberOfThreads > 0) {
+			this.executor = Executors.newFixedThreadPool(numberOfThreads);
+		} else {
+			this.executor = null;
+		}
 	}
 
 	/**
@@ -154,12 +147,12 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 	private <V> List<FeedbackArcSet<V>> executeAll(List<FeedbackTask<V>> tasks) {
 		List<FeedbackArcSet<V>> result = new ArrayList<>();
-		if (numberOfThreads <= 0) {
+
+		if (executor == null) {
 			for (FeedbackTask<V> task : tasks) {
 				result.add(task.call());
 			}
 		} else {
-			ExecutorService executor = Executors.newFixedThreadPool(Math.min(numberOfThreads, tasks.size()));
 			try {
 				for (Future<FeedbackArcSet<V>> future : executor.invokeAll(tasks)) {
 					result.add(future.get());
@@ -167,46 +160,57 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 			} catch (ExecutionException | InterruptedException e) {
 				e.printStackTrace();
 				return null; // should not happen
-			} finally {
-				executor.shutdown();
 			}
 		}
+
 		return result;
 	}
 
 	@Override
 	public <V> FeedbackArcSet<V> getFeedbackArcSet(Digraph<V> digraph, EdgeWeights<? super V> weights, FeedbackArcSetPolicy policy) {
-		if (digraph.isAcyclic()) {
-			return new FeedbackArcSet<>(Digraphs.emptyDigraph(), 0, policy, true);
+		if (Digraphs.isTriviallyAcyclic(digraph)) {
+			// known acyclic based on low vertex count
+			return FeedbackArcSet.empty(policy);
 		}
-		if (decompose) {
-			List<FeedbackTask<V>> tasks = new ArrayList<>();
-			for (Set<V> component : Digraphs.scc(digraph)) {
-				if (component.size() > 1) {
-					tasks.add(new FeedbackTask<>(digraph, weights, policy, component));
-				}
-			}
 
-			List<FeedbackArcSet<V>> feedbacks = executeAll(tasks);
-			if (feedbacks == null) {
-				return null;
-			}
+		List<Set<V>> components = Digraphs.scc(digraph);
 
-			int weight = 0;
-			boolean exact = true;
-			Digraph<V> result = new MapDigraph<>();
-			for (FeedbackArcSet<V> feedback : feedbacks) {
-				for (V source : feedback.vertices()) {
-					for (V target : feedback.targets(source)) {
-						result.put(source, target, digraph.get(source, target).getAsInt());
-					}
-				}
-				exact &= feedback.isExact();
-				weight += feedback.getWeight();
-			}
-			return new FeedbackArcSet<>(result, weight, policy, exact);
-		} else {
+		if (components.size() == digraph.getVertexCount()) {
+			// known acyclic based on strongly connected components
+			return FeedbackArcSet.empty(policy);
+		}
+
+		if (components.size() == 1) {
 			return fas(digraph, weights, policy);
 		}
+
+		List<FeedbackTask<V>> tasks = new ArrayList<>();
+
+		for (Set<V> component : components) {
+			if (component.size() > 1) {
+				tasks.add(new FeedbackTask<>(digraph, weights, policy, component));
+			}
+		}
+
+		List<FeedbackArcSet<V>> feedbacks = executeAll(tasks);
+		if (feedbacks == null) {
+			return null;
+		}
+
+		int weight = 0;
+		boolean exact = true;
+
+		Digraph<V> result = new MapDigraph<>();
+		for (FeedbackArcSet<V> feedback : feedbacks) {
+			for (V source : feedback.vertices()) {
+				for (V target : feedback.targets(source)) {
+					result.put(source, target, digraph.get(source, target).getAsInt());
+				}
+			}
+			exact &= feedback.isExact();
+			weight += feedback.getWeight();
+		}
+
+		return new FeedbackArcSet<>(result, weight, policy, exact);
 	}
 }

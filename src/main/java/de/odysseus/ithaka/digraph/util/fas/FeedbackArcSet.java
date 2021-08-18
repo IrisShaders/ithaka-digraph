@@ -16,6 +16,7 @@
 package de.odysseus.ithaka.digraph.util.fas;
 
 import de.odysseus.ithaka.digraph.Digraph;
+import de.odysseus.ithaka.digraph.Digraphs;
 import de.odysseus.ithaka.digraph.UnmodifiableDigraph;
 
 /**
@@ -33,6 +34,10 @@ public class FeedbackArcSet<V> extends UnmodifiableDigraph<V> {
 		this.weight = weight;
 		this.policy = policy;
 		this.exact = exact;
+	}
+
+	public static <V> FeedbackArcSet<V> empty(FeedbackArcSetPolicy policy) {
+		return new FeedbackArcSet<>(Digraphs.emptyDigraph(), 0, policy, true);
 	}
 
 	/**

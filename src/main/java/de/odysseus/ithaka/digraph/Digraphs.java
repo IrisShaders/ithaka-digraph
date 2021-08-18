@@ -92,6 +92,15 @@ public class Digraphs {
 	}
 
 	/**
+	 * Returns true if this graph is definitely acyclic from some quick checks,
+	 * but false if properly determining whether the graph is acyclic would
+	 * take more work.
+	 */
+	public static <V> boolean isTriviallyAcyclic(Digraph<V> digraph) {
+		return digraph.getVertexCount() < 2;
+	}
+
+	/**
 	 * Answer <code>true</code> if the given digraph is acyclic (DAG).
 	 * Per definition, the empty graph and single vertex digraphs are acyclic.
 	 *
@@ -99,13 +108,16 @@ public class Digraphs {
 	 * @return <code>true</code> iff the given digraph is acyclic
 	 */
 	public static <V> boolean isAcyclic(Digraph<V> digraph) {
-		int n = digraph.getVertexCount();
-		if (n < 2) {
-			return true; // no self loop
+		if (isTriviallyAcyclic(digraph)) {
+			return true;
 		}
+
+		int n = digraph.getVertexCount();
+
 		if (digraph.getEdgeCount() > (n * (n - 1)) / 2) {
 			return false;
 		}
+
 		return Digraphs.scc(digraph).size() == n;
 	}
 

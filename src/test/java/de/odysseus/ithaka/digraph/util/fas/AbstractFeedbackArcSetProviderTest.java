@@ -35,7 +35,7 @@ public class AbstractFeedbackArcSetProviderTest {
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 
-		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
+		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider() {
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.assertSame(digraph, graph);
@@ -56,7 +56,7 @@ public class AbstractFeedbackArcSetProviderTest {
 		graph.put(1, 2, 3);
 		graph.put(2, 1, 1);
 
-		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(false) {
+		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider() {
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.assertSame(digraph, graph);
@@ -88,8 +88,8 @@ public class AbstractFeedbackArcSetProviderTest {
 		AbstractFeedbackArcSetProvider provider = new AbstractFeedbackArcSetProvider(0) { // current thread
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
-				Assert.assertFalse(digraph == graph);
-				Assert.assertTrue(weights == graph);
+				Assert.assertSame(digraph, graph);
+				Assert.assertSame(weights, graph);
 				return digraph;
 			}
 		};
