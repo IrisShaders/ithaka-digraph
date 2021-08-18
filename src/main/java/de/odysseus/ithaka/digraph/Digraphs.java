@@ -342,7 +342,6 @@ public class Digraphs {
 	 * @param <P> the type of the result graph
 	 * @param factory1 used to create the partition graph
 	 * @param factory2 used to create the subgraphs
-	 * @param cumulator used to cumulate edges between subgraphs
 	 * @return a digraph of subgraphs of this digraph
 	 */
 	public static <V,G extends Digraph<V>,P extends Digraph<G>> P partition(

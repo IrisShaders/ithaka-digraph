@@ -22,7 +22,6 @@ import de.odysseus.ithaka.digraph.UnmodifiableDigraph;
  * Feedback arc set.
  *
  * @param <V> vertex type
- * @param <E> edge type
  */
 public class FeedbackArcSet<V> extends UnmodifiableDigraph<V> {
 	private final FeedbackArcSetPolicy policy;
