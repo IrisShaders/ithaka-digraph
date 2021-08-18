@@ -21,6 +21,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
+import de.odysseus.ithaka.digraph.Digraph;
+import de.odysseus.ithaka.digraph.MapDigraph;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,7 +31,7 @@ import de.odysseus.ithaka.digraph.DigraphProvider;
 public class DotExporterTest {
 	@Test
 	public void testSimple() throws IOException {
-		DotProvider<Integer, Boolean, SimpleDigraph<Integer>> provider = new DotProvider<Integer, Boolean, SimpleDigraph<Integer>>() {
+		DotProvider<Integer, Digraph<Integer>> provider = new DotProvider<Integer, Digraph<Integer>>() {
 			@Override
 			public String getNodeId(Integer vertex) {
 				return "v" + vertex;
@@ -39,35 +41,35 @@ public class DotExporterTest {
 				return vertex == 7 ? Arrays.asList(new DotAttribute("color", Color.red)) : null;
 			}
 			@Override
-			public Iterable<DotAttribute> getEdgeAttributes(Integer source, Integer target, Boolean edge) {
+			public Iterable<DotAttribute> getEdgeAttributes(Integer source, Integer target, int edgeWeight) {
 				return source == 1 ? Arrays.asList(new DotAttribute("arrowtail", "diamond")) : null;
 			}
 			@Override
-			public Iterable<DotAttribute> getDefaultNodeAttributes(SimpleDigraph<Integer> digraph) {
+			public Iterable<DotAttribute> getDefaultNodeAttributes(Digraph<Integer> digraph) {
 				return Arrays.asList(new DotAttribute("shape", "plaintext"));
 			}
 			
 			@Override
-			public Iterable<DotAttribute> getDefaultGraphAttributes(SimpleDigraph<Integer> digraph) {
+			public Iterable<DotAttribute> getDefaultGraphAttributes(Digraph<Integer> digraph) {
 				return null;
 			}
 			
 			@Override
-			public Iterable<DotAttribute> getDefaultEdgeAttributes(SimpleDigraph<Integer> digraph) {
+			public Iterable<DotAttribute> getDefaultEdgeAttributes(Digraph<Integer> digraph) {
 				return null;
 			}
 			
 			@Override
-			public Iterable<DotAttribute> getSubgraphAttributes(SimpleDigraph<Integer> subgraph, Integer vertex) {
+			public Iterable<DotAttribute> getSubgraphAttributes(Digraph<Integer> subgraph, Integer vertex) {
 				return null;
 			}
 		};
 		
-		SimpleDigraph<Integer> digraph = new SimpleDigraphAdapter<Integer>();
-		digraph.add(1, 2);
-		digraph.add(1, 3);
-		digraph.add(4, 2);
-		digraph.add(5, 6);
+		Digraph<Integer> digraph = new MapDigraph<>();
+		digraph.put(1, 2, 1);
+		digraph.put(1, 3, 1);
+		digraph.put(4, 2, 1);
+		digraph.put(5, 6, 1);
 		digraph.add(7);
 
 		StringWriter writer = new StringWriter();
@@ -84,7 +86,7 @@ public class DotExporterTest {
 
 	@Test
 	public void testSubgraph() throws IOException {
-		DotProvider<Integer, Boolean, SimpleDigraph<Integer>> provider = new DotProvider<Integer, Boolean, SimpleDigraph<Integer>>() {
+		DotProvider<Integer, Digraph<Integer>> provider = new DotProvider<Integer, Digraph<Integer>>() {
 			@Override
 			public String getNodeId(Integer vertex) {
 				return "v" + vertex;
@@ -94,47 +96,49 @@ public class DotExporterTest {
 				return null;
 			}
 			@Override
-			public Iterable<DotAttribute> getEdgeAttributes(Integer source, Integer target, Boolean edge) {
+			public Iterable<DotAttribute> getEdgeAttributes(Integer source, Integer target, int edgeWeight) {
 				return null;
 			}
 			@Override
-			public Iterable<DotAttribute> getDefaultNodeAttributes(SimpleDigraph<Integer> digraph) {
-				return null;
-			}
-			
-			@Override
-			public Iterable<DotAttribute> getDefaultGraphAttributes(SimpleDigraph<Integer> digraph) {
+			public Iterable<DotAttribute> getDefaultNodeAttributes(Digraph<Integer> digraph) {
 				return null;
 			}
 			
 			@Override
-			public Iterable<DotAttribute> getDefaultEdgeAttributes(SimpleDigraph<Integer> digraph) {
+			public Iterable<DotAttribute> getDefaultGraphAttributes(Digraph<Integer> digraph) {
 				return null;
 			}
 			
 			@Override
-			public Iterable<DotAttribute> getSubgraphAttributes(SimpleDigraph<Integer> subgraph, Integer vertex) {
+			public Iterable<DotAttribute> getDefaultEdgeAttributes(Digraph<Integer> digraph) {
+				return null;
+			}
+			
+			@Override
+			public Iterable<DotAttribute> getSubgraphAttributes(Digraph<Integer> subgraph, Integer vertex) {
 				return Arrays.asList(new DotAttribute("label", getNodeId(vertex)));
 			}
 		};
 		
-		DigraphProvider<Integer, SimpleDigraph<Integer>> subgraphs = new DigraphProvider<Integer, SimpleDigraph<Integer>>() {
-			SimpleDigraph<Integer> subgraph1 = new SimpleDigraphAdapter<Integer>();
-			SimpleDigraph<Integer> subgraph2 = new SimpleDigraphAdapter<Integer>();
+		DigraphProvider<Integer, Digraph<Integer>> subgraphs = new DigraphProvider<Integer, Digraph<Integer>>() {
+			Digraph<Integer> subgraph1 = new MapDigraph<>();
+			Digraph<Integer> subgraph2 = new MapDigraph<>();
+
 			{
 				subgraph1.add(10);
 				subgraph2.add(20);
 			}
+
 			@Override
-			public SimpleDigraph<Integer> get(Integer value) {
+			public Digraph<Integer> get(Integer value) {
 				return value == 1 ? subgraph1 : value == 2 ? subgraph2 : null;
 			}
 		};
 		
-		SimpleDigraph<Integer> digraph = new SimpleDigraphAdapter<Integer>();
-		digraph.add(1, 2);
-		digraph.add(1, 3);
-		digraph.add(3, 2);
+		Digraph<Integer> digraph = new MapDigraph<>();
+		digraph.put(1, 2, 1);
+		digraph.put(1, 3, 1);
+		digraph.put(3, 2, 1);
 
 		Writer writer = new StringWriter();
 		new DotExporter("", "").export(provider, digraph, subgraphs, writer);		
