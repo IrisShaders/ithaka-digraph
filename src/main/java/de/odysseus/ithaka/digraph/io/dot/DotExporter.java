@@ -191,7 +191,7 @@ public class DotExporter {
 		}
 		for (V source : digraph.vertices()) {
 			for (V target : digraph.targets(source)) {
-				writeEdge(writer, level, source, target, digraph.get(source, target), provider,
+				writeEdge(writer, level, source, target, digraph.get(source, target).getAsInt(), provider,
 						clusters.get(source), clusters.get(target));
 			}
 		}

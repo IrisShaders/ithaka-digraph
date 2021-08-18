@@ -17,6 +17,7 @@ package de.odysseus.ithaka.digraph;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -42,8 +43,8 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	@Override
-	public int get(Object source, Object target) {
-		return 0;
+	public OptionalInt get(Object source, Object target) {
+		return OptionalInt.empty();
 	}
 
 	@Override
@@ -77,13 +78,13 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	@Override
-	public int put(V source,V target, int edgeWeight) {
+	public OptionalInt put(V source,V target, int edgeWeight) {
 		throw new UnsupportedOperationException("Empty digraph cannot have edges!");
 	}
 
 	@Override
-	public int remove(V source, V target) {
-		return 0;
+	public OptionalInt remove(V source, V target) {
+		return OptionalInt.empty();
 	}
 
 	@Override

@@ -16,6 +16,7 @@
 package de.odysseus.ithaka.digraph;
 
 import java.util.Collection;
+import java.util.OptionalInt;
 
 /**
  * Unmodifiable digraph adapter.
@@ -40,7 +41,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public final int put(V source, V target, int edge) {
+	public final OptionalInt put(V source, V target, int edge) {
 		throw new UnsupportedOperationException("This digraph is readonly!");
 	}
 	
@@ -56,7 +57,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	 * @throws UnsupportedOperationException
 	 */
 	@Override
-	public final int remove(V source, V target) {
+	public final OptionalInt remove(V source, V target) {
 		throw new UnsupportedOperationException("This digraph is readonly!");
 	}
 	

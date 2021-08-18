@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -148,7 +149,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	@Override
-	public int put(V source, V target, int weight) {
+	public OptionalInt put(V source, V target, int weight) {
 		Map<V, Integer> edgeMap = vertexMap.get(source);
 
 		if (edgeMap == null || edgeMap.isEmpty()) {
@@ -162,34 +163,34 @@ public class MapDigraph<V> implements Digraph<V> {
 			edgeCount++;
 		}
 
-		return result == null ? 0 : result;
+		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
 	}
 
 	@Override
-	public int get(V source, V target) {
+	public OptionalInt get(V source, V target) {
 		Map<V, Integer> edgeMap = vertexMap.get(source);
 
 		if (edgeMap == null) {
-			return 0;
+			return OptionalInt.empty();
 		}
 
 		Integer result = edgeMap.get(target);
 
-		return result == null ? 0 : result;
+		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
 	}
 
 	@Override
-	public int remove(V source, V target) {
+	public OptionalInt remove(V source, V target) {
 		Map<V, Integer> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || !edgeMap.containsKey(target)) {
-			return 0;
+			return OptionalInt.empty();
 		}
 		Integer result = edgeMap.remove(target);
 		edgeCount--;
 		if (edgeMap.isEmpty()) {
 			vertexMap.put(source, Collections.emptyMap());
 		}
-		return result == null ? 0 : result;
+		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
 	}
 
 	@Override
@@ -340,7 +341,7 @@ public class MapDigraph<V> implements Digraph<V> {
 
 		for (V source : vertices()) {
 			for (V target : targets(source)) {
-				weight += get(source, target);
+				weight += get(source, target).getAsInt();
 			}
 		}
 
@@ -348,7 +349,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	@Override
-	public int getOutDegree(Object vertex) {
+	public int getOutDegree(V vertex) {
 		Map<V, Integer> edgeMap = vertexMap.get(vertex);
 		if (edgeMap == null) {
 			return 0;

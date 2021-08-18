@@ -60,7 +60,7 @@ public class TgfExporter {
 				writer.write(String.valueOf(index.get(source)));
 				writer.write(' ');
 				writer.write(String.valueOf(index.get(target)));
-				String label = provider.getEdgeLabel(digraph.get(source, target));
+				String label = provider.getEdgeLabel(digraph.get(source, target).getAsInt());
 				if (label != null) {
 					writer.write(' ');
 					writer.write(label);

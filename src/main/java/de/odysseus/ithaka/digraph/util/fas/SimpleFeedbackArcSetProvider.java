@@ -78,7 +78,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 						public int compare(V v1, V v2) {
 							int value1 = index.get(order.get(v1));
 							int value2 = index.get(order.get(v2));
-							return Integer.valueOf(value1).compareTo(value2);
+							return Integer.compare(value1, value2);
 						}
 					});
 				}
@@ -129,7 +129,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 					discovered.add(source);
 					for (V target : tangle.targets(source)) {
 						if (!discovered.contains(target)) { // feedback edge
-							weight += weights.get(source, target);
+							weight += weights.get(source, target).getAsInt();
 							size++;
 						}
 					}
@@ -157,7 +157,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 			discovered.add(source);
 			for (V target : tangle.targets(source)) {
 				if (!discovered.contains(target)) { // feedback edge
-					feedback.put(source, target, tangle.get(source, target));
+					feedback.put(source, target, tangle.get(source, target).getAsInt());
 				}
 			}
 		}

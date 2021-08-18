@@ -17,6 +17,7 @@ package de.odysseus.ithaka.digraph.util.fas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -120,8 +121,14 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 			final int delta = totalWeight(digraph, origWeights);
 			filteredWeights = new EdgeWeights<V>() {
 				@Override
-				public int get(V source, V target) {
-					return origWeights.get(source, target) + delta;
+				public OptionalInt get(V source, V target) {
+					OptionalInt original = origWeights.get(source, target);
+
+					if (original.isPresent()) {
+						return OptionalInt.of(original.getAsInt() + delta);
+					} else {
+						return OptionalInt.empty();
+					}
 				}
 			};
 		}
@@ -138,7 +145,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 		int weight = 0;
 		for (V source : digraph.vertices()) {
 			for (V target : digraph.targets(source)) {
-				weight += weights.get(source, target);
+				weight += weights.get(source, target).getAsInt();
 			}
 		}
 		return weight;
@@ -191,7 +198,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 			for (FeedbackArcSet<V> feedback : feedbacks) {
 				for (V source : feedback.vertices()) {
 					for (V target : feedback.targets(source)) {
-						result.put(source, target, digraph.get(source, target));
+						result.put(source, target, digraph.get(source, target).getAsInt());
 					}
 				}
 				exact &= feedback.isExact();

@@ -18,6 +18,7 @@ package de.odysseus.ithaka.digraph;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.OptionalInt;
 
 /**
  * Doubled digraph implementation.
@@ -43,7 +44,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	private final DigraphFactory<? extends Digraph<V>> factory;
 	
 	public DoubledDigraphAdapter() {
-		this(MapDigraph.<V>getDefaultDigraphFactory());
+		this(MapDigraph.getDefaultDigraphFactory());
 	}
 
 	public DoubledDigraphAdapter(DigraphFactory<? extends Digraph<V>> factory) {
@@ -71,12 +72,12 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	}
 	
 	@Override
-	public int getInDegree(Object vertex) {
+	public int getInDegree(V vertex) {
 		return reverse.getOutDegree(vertex);
 	}
 	
 	@Override
-	public Iterable<V> sources(Object target) {
+	public Iterable<V> sources(V target) {
 		return reverse.targets(target);
 	}
 	
@@ -185,22 +186,22 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	}
 	
 	@Override
-	public final int put(V source, V target, int edge) {
+	public final OptionalInt put(V source, V target, int edge) {
 		reverse.put0(target, source, edge);
 		return put0(source, target, edge);
 	}
 
-	protected int put0(V source, V target, int edge) {
+	protected OptionalInt put0(V source, V target, int edge) {
 		return super.put(source, target, edge);
 	}
 
 	@Override
-	public final int remove(V source, V target) {
+	public final OptionalInt remove(V source, V target) {
 		reverse.remove0(target, source);
 		return remove0(source, target);
 	}
 
-	protected int remove0(V source, V target) {
+	protected OptionalInt remove0(V source, V target) {
 		return super.remove(source, target);
 	}
 

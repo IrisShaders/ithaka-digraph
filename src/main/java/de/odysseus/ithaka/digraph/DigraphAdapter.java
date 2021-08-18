@@ -16,6 +16,7 @@
 package de.odysseus.ithaka.digraph;
 
 import java.util.Collection;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -47,12 +48,12 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 	}
 
 	@Override
-	public int get(V source, V target) {
+	public OptionalInt get(V source, V target) {
 		return delegate.get(source, target);
 	}
 
 	@Override
-	public int getOutDegree(Object vertex) {
+	public int getOutDegree(V vertex) {
 		return delegate.getOutDegree(vertex);
 	}
 
@@ -77,12 +78,12 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 	}
 
 	@Override
-	public int put(V source, V target, int edge) {
+	public OptionalInt put(V source, V target, int edge) {
 		return delegate.put(source, target, edge);
 	}
 
 	@Override
-	public int remove(V source, V target) {
+	public OptionalInt remove(V source, V target) {
 		return delegate.remove(source, target);
 	}
 

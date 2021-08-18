@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.Stack;
 
@@ -132,12 +133,15 @@ public class Digraphs {
 				return false;
 			}
 			for (V target : first.targets(source)) {
-				if (!second.contains(source, target)) {
+				OptionalInt secondEdge = second.get(source, target);
+
+				if (!secondEdge.isPresent()) {
 					return false;
 				}
+
 				if (compareEdges) {
-					int edge1 = first.get(source, target);
-					int edge2 = second.get(source, target);
+					int edge1 = first.get(source, target).getAsInt();
+					int edge2 = secondEdge.getAsInt();
 
 					if (edge1 != edge2) {
 						return false;
@@ -286,7 +290,7 @@ public class Digraphs {
 		for (V source : digraph.vertices()) {
 			reverse.add(source);
 			for (V target : digraph.targets(source)) {
-				reverse.put(target, source, digraph.get(source, target));
+				reverse.put(target, source, digraph.get(source, target).getAsInt());
 			}
 		}
 		return reverse;
@@ -303,7 +307,7 @@ public class Digraphs {
 		for (V source : digraph.vertices()) {
 			result.add(source);
 			for (V target : digraph.targets(source)) {
-				result.put(source, target, digraph.get(source, target));
+				result.put(source, target, digraph.get(source, target).getAsInt());
 			}
 		}
 		return result;
@@ -328,7 +332,7 @@ public class Digraphs {
 				subgraph.add(v);
 				for (V w : digraph.targets(v)) {
 					if (vertices.contains(w)) {
-						subgraph.put(v, w, digraph.get(v, w));
+						subgraph.put(v, w, digraph.get(v, w).getAsInt());
 					}
 				}
 			}
@@ -369,8 +373,8 @@ public class Digraphs {
 			for (V w : digraph.targets(v)) {
 				G target = vertex2subgraph.get(w);
 				if (source != target) {
-					int edgeWeight = partition.get(source, target);
-					edgeWeight += digraph.get(v, w);
+					int edgeWeight = partition.get(source, target).orElse(0);
+					edgeWeight += digraph.get(v, w).getAsInt();
 					partition.put(source, target, edgeWeight);
 				}
 			}

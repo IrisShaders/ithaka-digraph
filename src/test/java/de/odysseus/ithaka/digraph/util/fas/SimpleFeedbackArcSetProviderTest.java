@@ -21,6 +21,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Formatter;
+import java.util.OptionalInt;
 import java.util.Random;
 
 import de.odysseus.ithaka.digraph.MapDigraph;
@@ -62,8 +63,8 @@ public class SimpleFeedbackArcSetProviderTest {
 		class Weights implements EdgeWeights<Integer> {
 			final int[][] values = new int[size][size];
 			@Override
-			public int get(Integer source, Integer target) {
-				return values[source][target];
+			public OptionalInt get(Integer source, Integer target) {
+				return OptionalInt.of(values[source][target]);
 			}
 			@Override public String toString() {
 				Formatter formatter = new Formatter(new StringBuilder());
@@ -93,7 +94,7 @@ public class SimpleFeedbackArcSetProviderTest {
 	private boolean isFeedbackSet(Digraph<Integer> graph, Digraph<Integer> set) {
 		for (int source : set.vertices()) {
 			for (int target : set.targets(source)){
-				if (graph.remove(source, target) == 0) {
+				if (!graph.remove(source, target).isPresent()) {
 					return false;
 				}
 			}
@@ -115,7 +116,7 @@ public class SimpleFeedbackArcSetProviderTest {
 
 		for (V source : graph.vertices()) {
 			for (V target : graph.targets(source)) {
-				weight += weights.get(source, target);
+				weight += weights.get(source, target).orElse(0);
 			}
 		}
 

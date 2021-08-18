@@ -16,6 +16,7 @@
 package de.odysseus.ithaka.digraph;
 
 import java.util.Collection;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -30,7 +31,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * @param target target vertex
 	 * @return edge weight (<code>0</code> if there is no edge from <code>source</code> to <code>target</code>)
 	 */
-	int get(V source, V target);
+	OptionalInt get(V source, V target);
 
 	/**
 	 * Edge test.
@@ -61,7 +62,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * @return edge weight that has been previously set (<code>0</code> if there was no edge from <code>source</code>
 	 * to <code>target</code>)
 	 */
-	int put(V source, V target, int weight);
+	OptionalInt put(V source, V target, int weight);
 
 	/**
 	 * Remove an edge.
@@ -70,7 +71,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * @return edge weight that has been previously set (<code>0</code> if there was no edge from <code>source</code>
 	 * to <code>target</code>)
 	 */
-	int remove(V source, V target);
+	OptionalInt remove(V source, V target);
 	
 	/**
 	 * Remove a vertex.
@@ -111,7 +112,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	/**
 	 * @return number of edges starting at <code>vertex</code>
 	 */
-	int getOutDegree(Object vertex);
+	int getOutDegree(V vertex);
 
 	/**
 	 * @return number of edges in this digraph

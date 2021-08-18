@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -44,17 +45,21 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	private V vertex;
+	private boolean hasLoop;
 	private int loopWeight;
 
 	public TrivialDigraph() {
 	}
 
 	public TrivialDigraph(V vertex) {
-		this(vertex, 0);
+		this.vertex = vertex;
+		this.hasLoop = false;
+		this.loopWeight = 0;
 	}
 	
 	public TrivialDigraph(V vertex, int loopWeight) {
 		this.vertex = vertex;
+		this.hasLoop = true;
 		this.loopWeight = loopWeight;
 	}
 	
@@ -82,7 +87,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 
 	@Override
 	public boolean contains(Object source, Object target) {
-		return vertex != null && loopWeight != 0 && vertex.equals(source) && vertex.equals(target);
+		return vertex != null && hasLoop && vertex.equals(source) && vertex.equals(target);
 	}
 
 	@Override
@@ -91,23 +96,23 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	@Override
-	public int get(Object source, Object target) {
-		return contains(source, target) ? loopWeight : 0;
+	public OptionalInt get(Object source, Object target) {
+		return contains(source, target) ? OptionalInt.of(loopWeight) : OptionalInt.empty();
 	}
 
 	@Override
 	public int getInDegree(Object vertex) {
-		return loopWeight == 0 ? 0 : 1;
+		return hasLoop ? 1 : 0;
 	}
 
 	@Override
 	public int getOutDegree(Object vertex) {
-		return loopWeight == 0 ? 0 : 1;
+		return hasLoop ? 1 : 0;
 	}
 
 	@Override
 	public int getEdgeCount() {
-		return loopWeight == 0 ? 0 : 1;
+		return hasLoop ? 1 : 0;
 	}
 	
 	@Override
@@ -117,7 +122,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 
 	@Override
 	public int totalWeight() {
-		return loopWeight;
+		return hasLoop ? loopWeight : 0;
 	}
 
 	@Override
@@ -159,34 +164,37 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	@Override
-	public int put(V source, V target, int loopWeight) {
+	public OptionalInt put(V source, V target, int loopWeight) {
 		if (source != target) {
 			throw new UnsupportedOperationException("TrivialDigraph must not contain no-loop edges!");
 		}
 
-		int previousLoopWeight = this.loopWeight;
+		OptionalInt previousLoopWeight = hasLoop ? OptionalInt.of(this.loopWeight) : OptionalInt.empty();
 		add(source);
+		this.hasLoop = true;
 		this.loopWeight = loopWeight;
 
 		return previousLoopWeight;
 	}
 
 	@Override
-	public int remove(V source, V target) {
+	public OptionalInt remove(V source, V target) {
 		if (contains(source, target)) {
 			int loopWeight = this.loopWeight;
 			this.loopWeight = 0;
-			return loopWeight;
+			this.hasLoop = false;
+			return OptionalInt.of(loopWeight);
 		}
 
-		return 0;
+		return OptionalInt.empty();
 	}
 
 	@Override
 	public boolean remove(V vertex) {
 		if (this.vertex != null && this.vertex.equals(vertex)) {
 			this.vertex = null;
-			loopWeight = 0;
+			this.loopWeight = 0;
+			this.hasLoop = false;
 			return true;
 		}
 
@@ -217,7 +225,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 
 	@Override
 	public Iterable<V> targets(Object source) {
-		if (loopWeight == 0 || vertex == null || !vertex.equals(source)) {
+		if (!hasLoop || vertex == null || !vertex.equals(source)) {
 			return Collections.emptyList();
 		}
 		return new Iterable<V>() {
@@ -255,6 +263,6 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	
 	@Override
 	public boolean isAcyclic() {
-		return loopWeight == 0;
+		return !hasLoop;
 	}
 }
