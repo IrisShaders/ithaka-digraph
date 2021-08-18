@@ -65,7 +65,7 @@ public class MapDigraph<V> implements Digraph<V> {
 		Map<V, Integer> create(V source);
 	}
 
-	private static final <V> VertexMapFactory<V> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
+	private static <V> VertexMapFactory<V> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
 		return new VertexMapFactory<V>() {
 			@Override
 			public Map<V, Map<V, Integer>> create() {
@@ -76,9 +76,9 @@ public class MapDigraph<V> implements Digraph<V> {
 				}
 			}
 		};
-	};
+	}
 
-	private static final <V> EdgeMapFactory<V> getDefaultEdgeMapFactory(final Comparator<? super V> comparator) {
+	private static <V> EdgeMapFactory<V> getDefaultEdgeMapFactory(final Comparator<? super V> comparator) {
 		return new EdgeMapFactory<V>() {
 			@Override
 			public Map<V, Integer> create(V ignore) {
@@ -89,7 +89,7 @@ public class MapDigraph<V> implements Digraph<V> {
 				}
 			}
 		};
-	};
+	}
 
 	private final VertexMapFactory<V> vertexMapFactory;
 	private final EdgeMapFactory<V> edgeMapFactory;
@@ -218,10 +218,10 @@ public class MapDigraph<V> implements Digraph<V> {
 		}
 		for (V source : vertexMap.keySet()) {
 			Map<V, Integer> edgeMap = vertexMap.get(source);
-			Iterator<V> iter = edgeMap.keySet().iterator();
-			while (iter.hasNext()) {
-				if (vertices.contains(iter.next())) {
-					iter.remove();
+			Iterator<V> iterator = edgeMap.keySet().iterator();
+			while (iterator.hasNext()) {
+				if (vertices.contains(iterator.next())) {
+					iterator.remove();
 					edgeCount--;
 				}
 			}
@@ -243,7 +243,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	@Override
-	public boolean contains(Object vertex) {
+	public boolean contains(V vertex) {
 		return vertexMap.containsKey(vertex);
 	}
 
@@ -256,7 +256,7 @@ public class MapDigraph<V> implements Digraph<V> {
 			@Override
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
-					Iterator<V> delegate = vertexMap.keySet().iterator();
+					private final Iterator<V> delegate = vertexMap.keySet().iterator();
 					V vertex = null;
 
 					@Override
@@ -289,7 +289,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	@Override
-	public Iterable<V> targets(final Object source) {
+	public Iterable<V> targets(final V source) {
 		final Map<V, Integer> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || edgeMap.isEmpty()) {
 			return Collections.emptySet();
@@ -298,7 +298,7 @@ public class MapDigraph<V> implements Digraph<V> {
 			@Override
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
-					Iterator<V> delegate = edgeMap.keySet().iterator();
+					private final Iterator<V> delegate = edgeMap.keySet().iterator();
 
 					@Override
 					public boolean hasNext() {
@@ -315,9 +315,7 @@ public class MapDigraph<V> implements Digraph<V> {
 						delegate.remove();
 						edgeCount--;
 						if (edgeMap.isEmpty()) {
-							@SuppressWarnings("unchecked")
-							V v = (V) source;
-							vertexMap.put(v, Collections.emptyMap());
+							vertexMap.put(source, Collections.emptyMap());
 						}
 					}
 				};
@@ -363,12 +361,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	}
 
 	public DigraphFactory<? extends MapDigraph<V>> getDigraphFactory() {
-		return new DigraphFactory<MapDigraph<V>>() {
-			@Override
-			public MapDigraph<V> create() {
-				return new MapDigraph<V>(vertexMapFactory, edgeMapFactory);
-			}
-		};
+		return () -> new MapDigraph<>(vertexMapFactory, edgeMapFactory);
 	}
 
 	@Override
@@ -388,7 +381,7 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	@Override
 	public String toString() {
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append(getClass().getName().substring(getClass().getName().lastIndexOf('.') + 1));
 		b.append("(");
 		Iterator<V> vertices = vertices().iterator();

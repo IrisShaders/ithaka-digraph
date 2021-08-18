@@ -43,7 +43,7 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 	}
 
 	@Override
-	public boolean contains(Object vertex) {
+	public boolean contains(V vertex) {
 		return delegate.contains(vertex);
 	}
 
@@ -113,7 +113,7 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 	}
 	
 	@Override
-	public Iterable<V> targets(Object source) {
+	public Iterable<V> targets(V source) {
 		return delegate.targets(source);
 	}
 	

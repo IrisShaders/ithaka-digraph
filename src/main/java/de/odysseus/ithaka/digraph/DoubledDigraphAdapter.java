@@ -32,14 +32,9 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	 * @return doubled digraph factory
 	 */
 	public static <V> DigraphFactory<DoubledDigraphAdapter<V>> getAdapterFactory(final DigraphFactory<? extends Digraph<V>> factory) {
-		return new DigraphFactory<DoubledDigraphAdapter<V>>() {
-			@Override
-			public DoubledDigraphAdapter<V> create() {
-				return new DoubledDigraphAdapter<V>(factory);
-			}
-		};
+		return () -> new DoubledDigraphAdapter<>(factory);
 	}
-	
+
 	private final DoubledDigraphAdapter<V> reverse;
 	private final DigraphFactory<? extends Digraph<V>> factory;
 	
@@ -60,7 +55,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	}
 
 	protected DoubledDigraphAdapter<V> createReverse() {
-		return new DoubledDigraphAdapter<V>(factory, this);
+		return new DoubledDigraphAdapter<>(factory, this);
 	}
 
 	protected DigraphFactory<? extends DoubledDigraph<V>> getDigraphFactory() {
@@ -151,7 +146,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	 * Make sure the reverse digraph is kept in sync if <code>Iterator.remove()</code> is called.
 	 */
 	@Override
-	public Iterable<V> targets(final Object source) {
+	public Iterable<V> targets(final V source) {
 		final Iterator<V> delegate = super.targets(source).iterator();
 		if (!delegate.hasNext()) {
 			return Collections.emptySet();
@@ -172,9 +167,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 					@Override
 					public void remove() {
 						delegate.remove();
-						@SuppressWarnings("unchecked")
-						V v = (V)source;
-						reverse.remove0(target, v);
+						reverse.remove0(target, source);
 					}
 				};
 			}			

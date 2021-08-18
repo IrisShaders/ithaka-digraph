@@ -52,7 +52,7 @@ public class DigraphsTest {
 
 		int n = 0;
 		int v = 0;
-		for (int w : Digraphs.topsort(g, false)) {
+		for (int w : Digraphs.toposort(g, false)) {
 			Assert.assertTrue(v < w);
 			v = w;
 			n++;

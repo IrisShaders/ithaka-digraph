@@ -23,6 +23,8 @@ import java.util.OptionalInt;
  * @param <V> vertex type
  */
 public interface EdgeWeights<V> {
+	// We're storing this in order to avoid reallocating this optional constantly.
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	OptionalInt UNIT_WEIGHT = OptionalInt.of(1);
 
 	/**

@@ -45,7 +45,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * Vertex test
 	 * @return <code>true</code> iff this digraph contains <code>vertex</code>
 	 */
-	boolean contains(Object vertex);
+	boolean contains(V vertex);
 
 	/**
 	 * Add vertex.
@@ -97,7 +97,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * @param source source vertex
 	 * @return edge targets of edges starting at <code>source</code>
 	 */
-	Iterable<V> targets(Object source);
+	Iterable<V> targets(V source);
 
 	/**
 	 * @return number of vertices in this digraph

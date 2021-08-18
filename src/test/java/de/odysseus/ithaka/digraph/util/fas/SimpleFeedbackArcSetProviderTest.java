@@ -17,7 +17,6 @@ package de.odysseus.ithaka.digraph.util.fas;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Formatter;
@@ -25,8 +24,8 @@ import java.util.OptionalInt;
 import java.util.Random;
 
 import de.odysseus.ithaka.digraph.MapDigraph;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.odysseus.ithaka.digraph.Digraph;

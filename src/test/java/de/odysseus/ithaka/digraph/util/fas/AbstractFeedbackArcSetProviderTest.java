@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.OptionalInt;
 
 import de.odysseus.ithaka.digraph.MapDigraph;
-import junit.framework.Assert;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.odysseus.ithaka.digraph.Digraph;

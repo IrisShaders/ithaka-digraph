@@ -35,7 +35,7 @@ public class Digraphs {
 	 * @return empty digraph
 	 */
 	public static <V> DoubledDigraph<V> emptyDigraph() {
-		return new EmptyDigraph<V>();
+		return new EmptyDigraph<>();
 	}
 
 	/**
@@ -43,11 +43,10 @@ public class Digraphs {
 	 * is called on the resulting digraph that could modify the underlying
 	 * digraph, an exception is thrown.
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @return unmodifiable digraph equivalent to the given digraph
 	 */
 	public static <V> Digraph<V> unmodifiableDigraph(Digraph<V> digraph) {
-		return new UnmodifiableDigraph<V>(digraph);
+		return new UnmodifiableDigraph<>(digraph);
 	}
 
 	/**
@@ -60,11 +59,11 @@ public class Digraphs {
 	 * @param <V> vertex type
 	 * @param digraph input graph
 	 * @param descending let edges go from right to left if <code>true</code>
-	 * @return list of vertices toplologically ordered.
+	 * @return list of vertices topologically ordered.
 	 */
-	public static <V> List<V> topsort(Digraph<V> digraph, boolean descending) {
-		List<V> finished = new ArrayList<V>();
-		Set<V> discovered = new HashSet<V>(digraph.getVertexCount());
+	public static <V> List<V> toposort(Digraph<V> digraph, boolean descending) {
+		List<V> finished = new ArrayList<>();
+		Set<V> discovered = new HashSet<>(digraph.getVertexCount());
 		for (V vertex : digraph.vertices()) {
 			if (!discovered.contains(vertex)) {
 				dfs(digraph, vertex, discovered, finished);
@@ -79,12 +78,11 @@ public class Digraphs {
 	/**
 	 * Compute the set of vertices reachable from the given source in the given digraph.
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @param source source vertex
 	 * @return the set of vertices reachable from <code>source</code>
 	 */
 	public static <V> Set<V> closure(Digraph<V> digraph, V source) {
-		Set<V> closure = new HashSet<V>();
+		Set<V> closure = new HashSet<>();
 		dfs(digraph, source, closure, closure);
 		return closure;
 	}
@@ -93,7 +91,6 @@ public class Digraphs {
 	 * Answer <code>true</code> if the given digraph is acyclic (DAG).
 	 * Per definition, the empty graph and single vertex digraphs are acyclic.
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @return <code>true</code> iff the given digraph is acyclic
 	 */
 	public static <V> boolean isAcyclic(Digraph<V> digraph) {
@@ -157,7 +154,6 @@ public class Digraphs {
 	 * Per definition, the empty graph and single vertex digraphs are strongly connected.
 	 *
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @return <code>true</code> iff the given digraph is strongly connected
 	 */
 	public static <V> boolean isStronglyConnected(Digraph<V> digraph) {
@@ -165,27 +161,25 @@ public class Digraphs {
 		if (n < 2) {
 			return true;
 		}
-		return Digraphs.<V>scc(digraph).size() == 1;
+		return Digraphs.scc(digraph).size() == 1;
 	}
 
 	/**
 	 * Answer <code>true</code> if there is a path from the given source to the given target
 	 * in the supplied graph. If source is equal to target, answer <code>true</code>.
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return <code>true</code> iff there's a path from <code>source</code> to <code>target</code> in <code>digraph</code>
 	 */
 	public static <V> boolean isReachable(Digraph<V> digraph, V source, V target) {
-		return digraph.contains(source, target) || Digraphs.<V>closure(digraph, source).contains(target);
+		return digraph.contains(source, target) || Digraphs.closure(digraph, source).contains(target);
 	}
 
 	/**
 	 * Perform a depth first search.
 	 *
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @param source dfs start vertex
 	 * @param discovered set of vertices already discovered during search
 	 * @param finished collection of vertices visited during search
@@ -203,7 +197,6 @@ public class Digraphs {
 	 * Perform an undirected depth first search.
 	 *
 	 * @param <V> vertex type
-	 * @param digraph
 	 * @param source dfs start vertex
 	 * @param discovered set of vertices already discovered during search
 	 * @param finished collection of vertices visited during search
@@ -226,17 +219,15 @@ public class Digraphs {
 
 	/**
 	 * Compute strongly connected components.
-	 * @param <V>
-	 * @param digraph
 	 * @return strongly connected components
 	 */
 	public static <V> List<Set<V>> scc(Digraph<V> digraph) {
-		List<Set<V>> components = new ArrayList<Set<V>>();
+		List<Set<V>> components = new ArrayList<>();
 		Digraph<V> reverse = digraph.reverse();
 
 		// dfs on this graph
-		Stack<V> stack = new Stack<V>();
-		Set<V> discovered = new HashSet<V>();
+		Stack<V> stack = new Stack<>();
+		Set<V> discovered = new HashSet<>();
 		for (V vertex : digraph.vertices()) {
 			dfs(digraph, vertex, discovered, stack);
 		}
@@ -257,12 +248,10 @@ public class Digraphs {
 
 	/**
 	 * Compute weakly connected components.
-	 * @param <V>
-	 * @param digraph
 	 * @return weakly connected components
 	 */
 	public static <V> List<Set<V>> wcc(Digraph<V> digraph) {
-		List<Set<V>> components = new ArrayList<Set<V>>();
+		List<Set<V>> components = new ArrayList<>();
 		Digraph<V> reverse = digraph.reverse();
 
 		// dfs on both graphs
@@ -317,9 +306,6 @@ public class Digraphs {
 	 * Create subgraph induced by the specified vertices.
 	 * @param <V> vertex type
 	 * @param <G> subgraph type
-	 * @param digraph
-	 * @param vertices
-	 * @param factory
 	 * @return subgraph of the supplied digraph containing the specified vertices.
 	 */
 	public static <V,G extends Digraph<V>> G subgraph(
