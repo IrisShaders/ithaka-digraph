@@ -24,28 +24,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MapDigraphTest {
-	private Comparator<String> CMP = new Comparator<String>() {
-		@Override
-		public int compare(String o1, String o2) {
-			return o1.compareTo(o2);
-		}
-	};
-
-	private Comparator<String> CMP2 = new Comparator<String>() {
-		@Override
-		public int compare(String o1, String o2) {
-			return o2.compareTo(o1);
-		}
-	};
-
 	@Test
 	public void testGetDefaultDigraphFactory() {
-		Assert.assertNotNull(MapDigraph.<String,Integer>getDefaultDigraphFactory().create());
+		Assert.assertNotNull(MapDigraph.getDefaultDigraphFactory().create());
 	}
 
 	@Test
 	public void testMapDigraphComparatorOfQsuperV() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>(CMP);
+		MapDigraph<String> digraph = new MapDigraph<>(Comparator.naturalOrder());
 
 		digraph.add("c");
 		digraph.add("b");
@@ -67,7 +53,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testMapDigraphComparatorOfQsuperVComparatorOfQsuperV() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>(CMP, CMP2);
+		MapDigraph<String> digraph = new MapDigraph<String>(Comparator.naturalOrder(), Comparator.reverseOrder());
 
 		digraph.add("c");
 		digraph.add("b");
@@ -89,7 +75,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testMapDigraph() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.add("c");
 		digraph.add("b");
@@ -111,7 +97,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testAdd() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		Assert.assertTrue(digraph.add("foo"));
 		Assert.assertEquals(1, digraph.getVertexCount());
@@ -128,72 +114,72 @@ public class MapDigraphTest {
 
 	@Test
 	public void testPut() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
-		Assert.assertNull(digraph.put("foo", "bar", 1));
+		Assert.assertEquals(0, digraph.put("foo", "bar", 1));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 		Assert.assertTrue(digraph.contains("foo"));
 		Assert.assertTrue(digraph.contains("bar"));
 
-		Assert.assertEquals(1, digraph.put("foo", "bar", 2).intValue());
+		Assert.assertEquals(1, digraph.put("foo", "bar", 2));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 
-		Assert.assertEquals(2, digraph.put("foo", "bar", null).intValue());
+		Assert.assertEquals(2, digraph.put("foo", "bar", 0));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 
-		Assert.assertNull(digraph.put(null, null, 3));
+		Assert.assertEquals(0, digraph.put(null, null, 3));
 		Assert.assertTrue(digraph.contains(null));
 		Assert.assertTrue(digraph.contains(null, null));
 
-		Assert.assertNull(digraph.put("foo", "foo", 3));
+		Assert.assertEquals(0, digraph.put("foo", "foo", 3));
 		Assert.assertTrue(digraph.contains("foo", "foo"));
 	}
 
 	@Test
 	public void testGet() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar").intValue());
+		Assert.assertEquals(1, digraph.get("foo", "bar"));
 
 		digraph.put("foo", "bar", 2);
-		Assert.assertEquals(2, digraph.get("foo", "bar").intValue());
+		Assert.assertEquals(2, digraph.get("foo", "bar"));
 
-		digraph.put("foo", "bar", null);
-		Assert.assertNull(digraph.get("foo", "bar"));
+		digraph.put("foo", "bar", 0);
+		Assert.assertEquals(0, digraph.get("foo", "bar"));
 
 		digraph.put(null, null, 3);
-		Assert.assertEquals(3, digraph.get(null, null).intValue());
+		Assert.assertEquals(3, digraph.get(null, null));
 
-		Assert.assertNull(digraph.get("bar", "foo"));
+		Assert.assertEquals(0, digraph.get("bar", "foo"));
 	}
 
 	@Test
 	public void testRemoveVV() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "bar").intValue());
+		Assert.assertEquals(1, digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 
-		digraph.put("foo", "bar", null);
-		Assert.assertNull(digraph.remove("foo", "bar"));
+		digraph.put("foo", "bar", 0);
+		Assert.assertEquals(0, digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 
 		digraph.put("foo", "foo", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "foo").intValue());
+		Assert.assertEquals(1, digraph.remove("foo", "foo"));
 		Assert.assertFalse(digraph.contains(null, null));
 
 		digraph.put(null, null, 1);
-		Assert.assertEquals(1, digraph.remove(null, null).intValue());
+		Assert.assertEquals(1, digraph.remove(null, null));
 		Assert.assertFalse(digraph.contains(null, null));
 
-		Assert.assertNull(digraph.remove("bar", "foo"));
+		Assert.assertEquals(0, digraph.remove("bar", "foo"));
 	}
 
 	@Test
 	public void testRemoveV() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.add("foo");
 		Assert.assertTrue(digraph.remove("foo"));
@@ -206,7 +192,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testRemoveV2() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("a", "a", 1);
 		digraph.put("a", "b", 2);
@@ -228,14 +214,14 @@ public class MapDigraphTest {
 
 	@Test
 	public void testRemoveAll() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.put("a", "a", 1);
 		digraph.put("a", "b", 2);
 		digraph.put("a", "c", 3);
 		digraph.put("b", "a", 4);
 
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		set.add("a");
 		set.add("b");
 		digraph.removeAll(set);
@@ -249,7 +235,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testContainsObjectObject() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		digraph.add("foo");
 		Assert.assertFalse(digraph.contains("foo", "foo"));
@@ -264,7 +250,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testContainsObject() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 
 		Assert.assertFalse(digraph.contains("foo"));
 		digraph.add("foo");
@@ -275,7 +261,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testvertices() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -292,7 +278,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testTargets() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -312,7 +298,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testTargets2() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
 		digraph.put("bar", "foobar", 3);
@@ -334,7 +320,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testgetVertexCount() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		Assert.assertEquals(0, digraph.getVertexCount());
 
 		digraph.add("foo");
@@ -352,7 +338,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testGetOutDegree() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		Assert.assertEquals(0, digraph.getOutDegree("a"));
 
 		digraph.put("a", "a", 1);
@@ -367,7 +353,7 @@ public class MapDigraphTest {
 
 	@Test
 	public void testGetEdgeCount() {
-		MapDigraph<String,Integer> digraph = new MapDigraph<String,Integer>();
+		MapDigraph<String> digraph = new MapDigraph<>();
 		Assert.assertEquals(0, digraph.getEdgeCount());
 
 		digraph.put("a", "a", 1);
@@ -379,19 +365,19 @@ public class MapDigraphTest {
 
 	@Test
 	public void testGetDigraphFactory() {
-		Assert.assertNotNull(new MapDigraph<String,Integer>().getDigraphFactory());
+		Assert.assertNotNull(new MapDigraph<>().getDigraphFactory());
 	}
 
 	@Test
 	public void testReverse() {
-		MapDigraph<Integer,Object> g = new MapDigraph<Integer,Object>();
-		g.put(1, 2, null);
-		g.put(1, 3, null);
-		g.put(4, 2, null);
-		g.put(5, 6, null);
+		MapDigraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 0);
+		g.put(1, 3, 0);
+		g.put(4, 2, 0);
+		g.put(5, 6, 0);
 		g.add(7);
 
-		MapDigraph<Integer,Object> r = g.reverse();
+		MapDigraph<Integer> r = g.reverse();
 		Assert.assertEquals(7, r.getVertexCount());
 		Assert.assertEquals(4, r.getEdgeCount());
 		Assert.assertTrue(r.contains(2, 1));
@@ -402,19 +388,19 @@ public class MapDigraphTest {
 
 	@Test
 	public void testSubgraph() {
-		MapDigraph<Integer,Object> g = new MapDigraph<Integer,Object>();
-		g.put(1, 2, null);
-		g.put(1, 3, null);
-		g.put(4, 2, null);
-		g.put(5, 6, null);
+		MapDigraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 0);
+		g.put(1, 3, 0);
+		g.put(4, 2, 0);
+		g.put(5, 6, 0);
 		g.add(7);
 
-		Set<Integer> nodes = new HashSet<Integer>();
+		Set<Integer> nodes = new HashSet<>();
 		nodes.add(1);
 		nodes.add(2);
 		nodes.add(3);
 		nodes.add(7);
-		MapDigraph<Integer,Object> s = g.subgraph(nodes);
+		MapDigraph<Integer> s = g.subgraph(nodes);
 
 		Assert.assertEquals(4, s.getVertexCount());
 		Assert.assertEquals(2, s.getEdgeCount());
@@ -424,19 +410,19 @@ public class MapDigraphTest {
 
 	@Test
 	public void testIsAcyclic() {
-		MapDigraph<Integer,Object> g = new MapDigraph<Integer,Object>();
-		g.put(1, 2, null);
-		g.put(2, 3, null);
-		g.put(3, 4, null);
-		g.put(1, 3, null);
-		g.put(2, 4, null);
+		MapDigraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 0);
+		g.put(2, 3, 0);
+		g.put(3, 4, 0);
+		g.put(1, 3, 0);
+		g.put(2, 4, 0);
 		Assert.assertTrue(Digraphs.isAcyclic(g));
 
-		g = new MapDigraph<Integer,Object>();
-		g.put(1, 2, null);
-		g.put(2, 3, null);
-		g.put(3, 2, null);
-		g.put(3, 4, null);
+		g = new MapDigraph<>();
+		g.put(1, 2, 0);
+		g.put(2, 3, 0);
+		g.put(3, 2, 0);
+		g.put(3, 4, 0);
 		Assert.assertFalse(Digraphs.isAcyclic(g));
 	}
 }
