@@ -27,7 +27,7 @@ public class DigraphsTest {
 
 	@Test
 	public void testEmptyDigraph() {
-		Digraph<?,?> empty = Digraphs.emptyDigraph();
+		Digraph<?> empty = Digraphs.emptyDigraph();
 		Assert.assertEquals(0, empty.getEdgeCount());
 		Assert.assertEquals(0, empty.getVertexCount());
 		Assert.assertTrue(empty.isAcyclic());
@@ -35,18 +35,18 @@ public class DigraphsTest {
 
 	@Test(expected=UnsupportedOperationException.class)
 	public void testUnmodifiableDigraph() {
-		Digraph<Integer,Object> digraph = Digraphs.unmodifiableDigraph(new MapDigraph<Integer,Object>());
+		Digraph<Integer> digraph = Digraphs.unmodifiableDigraph(new MapDigraph<>());
 		digraph.put(1, 2, 3);
 	}
 
 	@Test
-	public void testTopsort() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 4);
-		g.add(1, 3);
-		g.add(2, 4);
+	public void testToposort() {
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 4, 1);
+		g.put(1, 3, 1);
+		g.put(2, 4, 1);
 		assert g.isAcyclic();
 
 		int n = 0;
@@ -61,11 +61,11 @@ public class DigraphsTest {
 
 	@Test
 	public void testClosure() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 2);
-		g.add(3, 4);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 2, 1);
+		g.put(3, 4, 1);
 
 		Set<Integer> c;
 
@@ -87,51 +87,51 @@ public class DigraphsTest {
 
 	@Test
 	public void testIsAcyclic() {
-		SimpleDigraph<Integer> g;
+		Digraph<Integer> g;
 
-		g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 4);
-		g.add(1, 3);
-		g.add(2, 4);
+		g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 4, 1);
+		g.put(1, 3, 1);
+		g.put(2, 4, 1);
 		Assert.assertTrue(Digraphs.isAcyclic(g));
 
-		g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 2);
-		g.add(3, 4);
+		g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 2, 1);
+		g.put(3, 4, 1);
 		Assert.assertFalse(Digraphs.isAcyclic(g));
 	}
 
 	@Test
 	public void testIsStronglyConnected() {
-		SimpleDigraph<Integer> g;
+		Digraph<Integer> g;
 
-		g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 4);
-		g.add(1, 3);
-		g.add(2, 4);
+		g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 4, 1);
+		g.put(1, 3, 1);
+		g.put(2, 4, 1);
 		Assert.assertFalse(Digraphs.isStronglyConnected(g));
 
-		g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 4);
-		g.add(4, 2);
-		g.add(3, 1);
+		g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 4, 1);
+		g.put(4, 2, 1);
+		g.put(3, 1, 1);
 		Assert.assertTrue(Digraphs.isStronglyConnected(g));
 	}
 
 	@Test
 	public void testIsEquivalent() {
-		WeightedDigraph<Integer> g1;
-		WeightedDigraph<Integer> g2;
+		Digraph<Integer> g1;
+		Digraph<Integer> g2;
 
-		g1 = new WeightedDigraphAdapter<Integer>();
+		g1 = new MapDigraph<>();
 		g1.add(0);
 		g1.put(1, 2, 1);
 		g1.put(2, 3, 2);
@@ -144,7 +144,7 @@ public class DigraphsTest {
 		Assert.assertTrue(Digraphs.isEquivalent(g1, g2, false));
 		Assert.assertTrue(Digraphs.isEquivalent(g1, g2, true));
 
-		g2 = new WeightedDigraphAdapter<Integer>();
+		g2 = new MapDigraph<>();
 		g2.add(0);
 		g2.put(1, 2, 1);
 		g2.put(2, 3, 2);
@@ -191,22 +191,15 @@ public class DigraphsTest {
 		Assert.assertTrue(Digraphs.isEquivalent(g2, g1, false));
 		Assert.assertFalse(Digraphs.isEquivalent(g1, g2, true));
 		Assert.assertFalse(Digraphs.isEquivalent(g2, g1, true));
-
-		g2.put(2, 3, null);
-
-		Assert.assertTrue(Digraphs.isEquivalent(g1, g2, false));
-		Assert.assertTrue(Digraphs.isEquivalent(g2, g1, false));
-		Assert.assertFalse(Digraphs.isEquivalent(g1, g2, true));
-		Assert.assertFalse(Digraphs.isEquivalent(g2, g1, true));
 	}
 
 	@Test
 	public void testIsReachable() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 2);
-		g.add(3, 4);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 2, 1);
+		g.put(3, 4, 1);
 
 		Assert.assertTrue(Digraphs.isReachable(g, 1, 1));
 		Assert.assertTrue(Digraphs.isReachable(g, 1, 2));
@@ -229,18 +222,18 @@ public class DigraphsTest {
 
 	@Test
 	public void testDfs() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 3);
-		g.add(3, 2);
-		g.add(3, 4);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 3, 1);
+		g.put(3, 2, 1);
+		g.put(3, 4, 1);
 
-		Set<Integer> discovered = new HashSet<Integer>();
-		List<Integer> finished = new ArrayList<Integer>();
+		Set<Integer> discovered = new HashSet<>();
+		List<Integer> finished = new ArrayList<>();
 		Digraphs.dfs(g, 1, discovered, finished);
 
-		Assert.assertTrue(discovered.size() == 4);
-		Assert.assertTrue(finished.size() == 4);
+		Assert.assertEquals(4, discovered.size());
+		Assert.assertEquals(4, finished.size());
 		Assert.assertEquals(4, finished.get(0).intValue());
 		Assert.assertEquals(3, finished.get(1).intValue());
 		Assert.assertEquals(2, finished.get(2).intValue());
@@ -249,18 +242,18 @@ public class DigraphsTest {
 
 	@Test
 	public void testDfs2() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(2, 1);
-		g.add(2, 3);
-		g.add(3, 2);
-		g.add(3, 4);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(2, 1, 1);
+		g.put(2, 3, 1);
+		g.put(3, 2, 1);
+		g.put(3, 4, 1);
 
-		Set<Integer> discovered = new HashSet<Integer>();
-		List<Integer> finished = new ArrayList<Integer>();
+		Set<Integer> discovered = new HashSet<>();
+		List<Integer> finished = new ArrayList<>();
 		Digraphs.dfs2(g, 1, discovered, finished);
 
-		Assert.assertTrue(discovered.size() == 4);
-		Assert.assertTrue(finished.size() == 4);
+		Assert.assertEquals(4, discovered.size());
+		Assert.assertEquals(4, finished.size());
 		Assert.assertEquals(4, finished.get(0).intValue());
 		Assert.assertEquals(3, finished.get(1).intValue());
 		Assert.assertEquals(2, finished.get(2).intValue());
@@ -269,13 +262,13 @@ public class DigraphsTest {
 
 	@Test
 	public void testScc() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 1);
-		g.add(1, 3);
-		g.add(3, 4);
-		g.add(4, 2);
-		g.add(3, 5);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 1, 1);
+		g.put(1, 3, 1);
+		g.put(3, 4, 1);
+		g.put(4, 2, 1);
+		g.put(3, 5, 1);
 
 		List<Set<Integer>> components = Digraphs.scc(g);
 		Assert.assertEquals(2, components.size());
@@ -291,11 +284,11 @@ public class DigraphsTest {
 
 	@Test
 	public void testWcc() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(1, 3);
-		g.add(4, 2);
-		g.add(5, 6);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(1, 3, 1);
+		g.put(4, 2, 1);
+		g.put(5, 6, 1);
 
 		List<Set<Integer>> components = Digraphs.wcc(g);
 		Assert.assertEquals(2, components.size());
@@ -312,14 +305,14 @@ public class DigraphsTest {
 
 	@Test
 	public void testReverse() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(1, 3);
-		g.add(4, 2);
-		g.add(5, 6);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(1, 3, 1);
+		g.put(4, 2, 1);
+		g.put(5, 6, 1);
 		g.add(7);
 
-		SimpleDigraph<Integer> r = g.reverse();
+		Digraph<Integer> r = g.reverse();
 		Assert.assertEquals(7, r.getVertexCount());
 		Assert.assertEquals(4, r.getEdgeCount());
 		Assert.assertTrue(r.contains(2, 1));
@@ -330,19 +323,19 @@ public class DigraphsTest {
 
 	@Test
 	public void testSubgraph() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(1, 3);
-		g.add(4, 2);
-		g.add(5, 6);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(1, 3, 1);
+		g.put(4, 2, 1);
+		g.put(5, 6, 1);
 		g.add(7);
 
-		Set<Integer> nodes = new HashSet<Integer>();
+		Set<Integer> nodes = new HashSet<>();
 		nodes.add(1);
 		nodes.add(2);
 		nodes.add(3);
 		nodes.add(7);
-		SimpleDigraph<Integer> s = g.subgraph(nodes);
+		Digraph<Integer> s = g.subgraph(nodes);
 
 		Assert.assertEquals(4, s.getVertexCount());
 		Assert.assertEquals(2, s.getEdgeCount());
@@ -352,46 +345,37 @@ public class DigraphsTest {
 
 	@Test
 	public void testPartition() {
-		SimpleDigraph<Integer> g = new SimpleDigraphAdapter<Integer>();
-		g.add(1, 2);
-		g.add(2, 1);
-		g.add(1, 3);
-		g.add(1, 4);
-		g.add(3, 4);
-		g.add(4, 2);
-		g.add(3, 5);
+		Digraph<Integer> g = new MapDigraph<>();
+		g.put(1, 2, 1);
+		g.put(2, 1, 1);
+		g.put(1, 3, 1);
+		g.put(1, 4, 1);
+		g.put(3, 4, 1);
+		g.put(4, 2, 1);
+		g.put(3, 5, 1);
 
-		List<Set<Integer>> sets = new ArrayList<Set<Integer>>();
-		Set<Integer> set = new HashSet<Integer>();
+		List<Set<Integer>> sets = new ArrayList<>();
+		Set<Integer> set = new HashSet<>();
 		set.add(1);
 		set.add(2);
 		sets.add(set);
-		set = new HashSet<Integer>();
+		set = new HashSet<>();
 		set.add(3);
 		set.add(4);
 		sets.add(set);
-		set = new HashSet<Integer>();
+		set = new HashSet<>();
 		set.add(5);
 		sets.add(set);
 
-		DigraphFactory<WeightedDigraphAdapter<SimpleDigraph<Integer>>> f1 =
-			WeightedDigraphAdapter.<SimpleDigraph<Integer>>getAdapterFactory(MapDigraph.<SimpleDigraph<Integer>,Integer>getDefaultDigraphFactory());
-		DigraphFactory<SimpleDigraphAdapter<Integer>> f2 =
-			SimpleDigraphAdapter.<Integer>getAdapterFactory(MapDigraph.<Integer,Boolean>getDefaultDigraphFactory());
-		EdgeCumulator<SimpleDigraph<Integer>, Integer, Boolean> c =
-			new EdgeCumulator<SimpleDigraph<Integer>, Integer, Boolean>() {
-			@Override
-			public Integer add(SimpleDigraph<Integer> s, SimpleDigraph<Integer> t, Integer c, Boolean e) {
-				return c == null ? 1 : c + 1;
-			}
-		};
-		WeightedDigraph<SimpleDigraph<Integer>> p =
-			Digraphs.<Integer,Boolean,SimpleDigraph<Integer>,WeightedDigraph<SimpleDigraph<Integer>>,Integer>partition(g, sets, f1, f2, c);
+		DigraphFactory<MapDigraph<Digraph<Integer>>> f1 = MapDigraph.getDefaultDigraphFactory();
+		DigraphFactory<MapDigraph<Integer>> f2 = MapDigraph.getDefaultDigraphFactory();
+
+		Digraph<Digraph<Integer>> p = Digraphs.partition(g, sets, f1, f2);
 
 		Assert.assertEquals(3, p.getVertexCount());
 		Assert.assertEquals(3, p.getEdgeCount());
-		SimpleDigraph<Integer> s1 = null, s2 = null, s3 = null;
-		for (SimpleDigraph<Integer> s : p.vertices()) {
+		Digraph<Integer> s1 = null, s2 = null, s3 = null;
+		for (Digraph<Integer> s : p.vertices()) {
 			if (s.contains(1) && s.contains(2)) {
 				Assert.assertEquals(2, s.getVertexCount());
 				Assert.assertEquals(2, s.getEdgeCount());
@@ -412,8 +396,8 @@ public class DigraphsTest {
 			}
 		}
 		Assert.assertTrue(s1 != s2 && s1 != s3 && s2 != s3 && s1 != null && s2 != null && s3 != null);
-		Assert.assertEquals(2, p.get(s1, s2).intValue());
-		Assert.assertEquals(1, p.get(s2, s1).intValue());
-		Assert.assertEquals(1, p.get(s2, s3).intValue());
+		Assert.assertEquals(2, p.get(s1, s2));
+		Assert.assertEquals(1, p.get(s2, s1));
+		Assert.assertEquals(1, p.get(s2, s3));
 	}
 }
