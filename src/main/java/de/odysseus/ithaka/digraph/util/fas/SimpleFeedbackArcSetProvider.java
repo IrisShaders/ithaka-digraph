@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -50,16 +51,16 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	}
 
 	/**
-	 * create equivalent graphs whith different edge orderings.
+	 * create equivalent graphs with different edge orderings.
 	 * @param digraph digraph to copy
 	 * @return list of copies
 	 */
 	private <V> List<Digraph<V>> copies(Digraph<V> digraph, int count) {
-		List<Digraph<V>> copies = new ArrayList<Digraph<V>>();
+		List<Digraph<V>> copies = new ArrayList<>();
 		copies.add(digraph);
 
-		final List<Integer> shuffle = new ArrayList<Integer>();
-		final Map<V, Integer> order = new HashMap<V, Integer>();
+		final List<Integer> shuffle = new ArrayList<>();
+		final Map<V, Integer> order = new HashMap<>();
 		int index = 0;
 		for (V source : digraph.vertices()) {
 			order.put(source, index);
@@ -69,15 +70,16 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		Random random = new Random(7);
 		for (int i = 0; i < count; i++) {
 			Collections.shuffle(shuffle, random);
+			List<Integer> mapping = new ArrayList<>(shuffle);
+
 			copies.add(Digraphs.copy(digraph, new DigraphFactory<Digraph<V>>() {
-				List<Integer> index = new ArrayList<Integer>(shuffle);
 				@Override
 				public Digraph<V> create() {
-					return new MapDigraph<V>(new Comparator<V>() {
+					return new MapDigraph<>(new Comparator<V>() {
 						@Override
 						public int compare(V v1, V v2) {
-							int value1 = index.get(order.get(v1));
-							int value2 = index.get(order.get(v2));
+							int value1 = mapping.get(order.get(v1));
+							int value2 = mapping.get(order.get(v2));
 							return Integer.compare(value1, value2);
 						}
 					});
@@ -113,8 +115,8 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		 * perform DFS for each node, keep best result
 		 */
 		List<Digraph<V>> copies = copies(tangle, Math.min(10, tangle.getVertexCount()));		
-		List<V> finished = new ArrayList<V>(tangle.getVertexCount());
-		Set<V> discovered = new HashSet<V>(tangle.getVertexCount());
+		List<V> finished = new ArrayList<>(tangle.getVertexCount());
+		Set<V> discovered = new HashSet<>(tangle.getVertexCount());
 		for (V start : tangle.vertices()) {
 			for (Digraph<V> copy : copies) {
 				finished.clear();
@@ -138,7 +140,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 					}
 				}
 				if (weight < minWeight || weight == minWeight && size < minSize) {
-					minFinished = new ArrayList<V>(finished);
+					minFinished = new ArrayList<>(finished);
 					minWeight = weight;
 					minSize = size;
 				}
@@ -147,6 +149,9 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 				break;
 			}
 		}
+
+		// If the input graph has at least a single vertex, we'll get at least one result.
+		Objects.requireNonNull(minFinished);
 
 		/*
 		 * create feedback graph
