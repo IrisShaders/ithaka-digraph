@@ -88,8 +88,6 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 	/**
 	 * Compute minimum feedback arc set.
-	 * @param digraph
-	 * @param weights
 	 * @return feedback arc set or <code>null</code>
 	 */
 	protected <V> Digraph<V> mfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
@@ -99,7 +97,6 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	/**
 	 * Compute light feedback arc set.
 	 * @param digraph original graph or tangle of it (if decompose == true)
-	 * @param weights
 	 * @return feedback arc set
 	 */
 	protected abstract <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights);
@@ -138,7 +135,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 			result = lfas(digraph, filteredWeights);
 			exact = false;
 		}
-		return new FeedbackArcSet<V>(result, totalWeight(result, weights), policy, exact);
+		return new FeedbackArcSet<>(result, totalWeight(result, weights), policy, exact);
 	}
 
 	protected <V> int totalWeight(Digraph<V> digraph, EdgeWeights<? super V> weights) {
@@ -152,7 +149,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	}
 
 	private <V> List<FeedbackArcSet<V>> executeAll(List<FeedbackTask<V>> tasks) {
-		List<FeedbackArcSet<V>> result = new ArrayList<FeedbackArcSet<V>>();
+		List<FeedbackArcSet<V>> result = new ArrayList<>();
 		if (numberOfThreads <= 0) {
 			for (FeedbackTask<V> task : tasks) {
 				result.add(task.call());
@@ -163,9 +160,8 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 				for (Future<FeedbackArcSet<V>> future : executor.invokeAll(tasks)) {
 					result.add(future.get());
 				}
-			} catch (ExecutionException e) {
-				return null; // should not happen
-			} catch (InterruptedException e) {
+			} catch (ExecutionException | InterruptedException e) {
+				e.printStackTrace();
 				return null; // should not happen
 			} finally {
 				executor.shutdown();
@@ -177,13 +173,13 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	@Override
 	public <V> FeedbackArcSet<V> getFeedbackArcSet(Digraph<V> digraph, EdgeWeights<? super V> weights, FeedbackArcSetPolicy policy) {
 		if (digraph.isAcyclic()) {
-			return new FeedbackArcSet<V>(Digraphs.<V>emptyDigraph(), 0, policy, true);
+			return new FeedbackArcSet<>(Digraphs.emptyDigraph(), 0, policy, true);
 		}
 		if (decompose) {
-			List<FeedbackTask<V>> tasks = new ArrayList<FeedbackTask<V>>();
+			List<FeedbackTask<V>> tasks = new ArrayList<>();
 			for (Set<V> component : Digraphs.scc(digraph)) {
 				if (component.size() > 1) {
-					tasks.add(new FeedbackTask<V>(digraph, weights, policy, component));
+					tasks.add(new FeedbackTask<>(digraph, weights, policy, component));
 				}
 			}
 
@@ -194,7 +190,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 			int weight = 0;
 			boolean exact = true;
-			Digraph<V> result = new MapDigraph<V>();
+			Digraph<V> result = new MapDigraph<>();
 			for (FeedbackArcSet<V> feedback : feedbacks) {
 				for (V source : feedback.vertices()) {
 					for (V target : feedback.targets(source)) {
@@ -204,7 +200,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 				exact &= feedback.isExact();
 				weight += feedback.getWeight();
 			}
-			return new FeedbackArcSet<V>(result, weight, policy, exact);
+			return new FeedbackArcSet<>(result, weight, policy, exact);
 		} else {
 			return fas(digraph, weights, policy);
 		}

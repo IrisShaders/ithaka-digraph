@@ -30,7 +30,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	}
 	
 	/**
-	 * @throws UnsupportedOperationException
+	 * @throws UnsupportedOperationException unmodifiable
 	 */
 	@Override
 	public final boolean add(V vertex) {
@@ -38,7 +38,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	}
 
 	/**
-	 * @throws UnsupportedOperationException
+	 * @throws UnsupportedOperationException unmodifiable
 	 */
 	@Override
 	public final OptionalInt put(V source, V target, int edge) {
@@ -46,7 +46,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	}
 	
 	/**
-	 * @throws UnsupportedOperationException
+	 * @throws UnsupportedOperationException unmodifiable
 	 */
 	@Override
 	public final boolean remove(V vertex) {
@@ -54,7 +54,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	}
 	
 	/**
-	 * @throws UnsupportedOperationException
+	 * @throws UnsupportedOperationException unmodifiable
 	 */
 	@Override
 	public final OptionalInt remove(V source, V target) {
@@ -62,7 +62,7 @@ public class UnmodifiableDigraph<V> extends DigraphAdapter<V> {
 	}
 	
 	/**
-	 * @throws UnsupportedOperationException
+	 * @throws UnsupportedOperationException unmodifiable
 	 */
 	@Override
 	public final void removeAll(Collection<V> vertices) {

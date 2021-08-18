@@ -113,7 +113,7 @@ public class DotExporter {
 				writeAttributes(writer, attributes.iterator());
 			}
 		} else {
-			List<DotAttribute> attributeList = new ArrayList<DotAttribute>();
+			List<DotAttribute> attributeList = new ArrayList<>();
 			if (sourceCluster != null) {
 				attributeList.add(sourceCluster.tail);
 			}
@@ -134,7 +134,7 @@ public class DotExporter {
 	private <V, G extends Digraph<V>> Map<V, Cluster<V,G>> createClusters(
 			G digraph,
 			DotProvider<V, G> provider,
-			DigraphProvider<? super V, G> subgraphs) throws IOException {
+			DigraphProvider<? super V, G> subgraphs) {
 		Map<V, Cluster<V,G>> clusters = new HashMap<>();
 		if (subgraphs != null) {
 			for (V vertex : digraph.vertices()) {

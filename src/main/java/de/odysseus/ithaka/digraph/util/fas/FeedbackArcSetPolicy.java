@@ -27,5 +27,5 @@ public enum FeedbackArcSetPolicy {
 	/**
 	 * minimize weight of feedback arcs
 	 */
-	MIN_WEIGHT;
+	MIN_WEIGHT
 }

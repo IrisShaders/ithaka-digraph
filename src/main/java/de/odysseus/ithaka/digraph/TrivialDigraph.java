@@ -30,39 +30,16 @@ import java.util.Set;
  * @param <V> vertex type
  */
 public class TrivialDigraph<V> implements DoubledDigraph<V> {
-	/**
-	 * Answer a factory which creates empty trivial digraphs.
-	 * @param <V> vertex type
-	 * @return trivial digraph factory
-	 */
-	public static <V> DigraphFactory<TrivialDigraph<V>> getDigraphFactory() {
-		return new DigraphFactory<TrivialDigraph<V>>() {
-			@Override
-			public TrivialDigraph<V> create() {
-				return new TrivialDigraph<V>();
-			}
-		};
-	}
-
 	private V vertex;
 	private boolean hasLoop;
 	private int loopWeight;
 
 	public TrivialDigraph() {
+		vertex = null;
+		hasLoop = false;
+		loopWeight = 0;
 	}
 
-	public TrivialDigraph(V vertex) {
-		this.vertex = vertex;
-		this.hasLoop = false;
-		this.loopWeight = 0;
-	}
-	
-	public TrivialDigraph(V vertex, int loopWeight) {
-		this.vertex = vertex;
-		this.hasLoop = true;
-		this.loopWeight = loopWeight;
-	}
-	
 	/**
 	 * @throws UnsupportedOperationException if adding the vertex would result in having 2 vertices in the graph 
 	 * @throws IllegalArgumentException if <code>vertex == null</code>
