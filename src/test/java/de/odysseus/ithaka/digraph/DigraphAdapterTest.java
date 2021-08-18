@@ -23,18 +23,18 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class DigraphAdapterTest {
-	class TestAdapter extends DigraphAdapter<String,Integer> {
+	private static final class TestAdapter extends DigraphAdapter<String> {
 		TestAdapter() {
-			super(MapDigraph.<String,Integer>getDefaultDigraphFactory().create());
+			super(MapDigraph.<String>getDefaultDigraphFactory().create());
 		}
-		TestAdapter(Digraph<String,Integer> delegate) {
+		TestAdapter(Digraph<String> delegate) {
 			super(delegate);
 		}
 	}
 
 	@Test
 	public void testHashCode() {
-		Digraph<String,Integer> delegate = MapDigraph.<String,Integer>getDefaultDigraphFactory().create();
+		Digraph<String> delegate = MapDigraph.<String>getDefaultDigraphFactory().create();
 		TestAdapter digraph = new TestAdapter(delegate);
 		Assert.assertEquals(delegate.hashCode(), digraph.hashCode());
 	}
@@ -66,9 +66,9 @@ public class DigraphAdapterTest {
 	@Test
 	public void testGet() {
 		TestAdapter digraph = new TestAdapter();
-		Assert.assertNull(digraph.get("foo", "bar"));
+		Assert.assertEquals(0, digraph.get("foo", "bar"));
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.get("foo", "bar").intValue());
+		Assert.assertEquals(1, digraph.get("foo", "bar"));
 	}
 
 	@Test
@@ -99,7 +99,7 @@ public class DigraphAdapterTest {
 	}
 
 	@Test
-	public void testgetVertexCount() {
+	public void testGetVertexCount() {
 		TestAdapter digraph = new TestAdapter();
 		Assert.assertEquals(0, digraph.getVertexCount());
 
@@ -117,7 +117,7 @@ public class DigraphAdapterTest {
 	}
 
 	@Test
-	public void testvertices() {
+	public void testVertices() {
 		TestAdapter digraph = new TestAdapter();
 		digraph.put("foo", "bar", 1);
 		digraph.put("bar", "foo", 2);
@@ -137,7 +137,7 @@ public class DigraphAdapterTest {
 	public void testPut() {
 		TestAdapter digraph = new TestAdapter();
 
-		Assert.assertNull(digraph.put("foo", "bar", 1));
+		Assert.assertEquals(0, digraph.put("foo", "bar", 1));
 		Assert.assertTrue(digraph.contains("foo", "bar"));
 	}
 
@@ -146,7 +146,7 @@ public class DigraphAdapterTest {
 		TestAdapter digraph = new TestAdapter();
 
 		digraph.put("foo", "bar", 1);
-		Assert.assertEquals(1, digraph.remove("foo", "bar").intValue());
+		Assert.assertEquals(1, digraph.remove("foo", "bar"));
 		Assert.assertFalse(digraph.contains("foo", "bar"));
 	}
 
@@ -163,7 +163,7 @@ public class DigraphAdapterTest {
 	public void testRemoveAll() {
 		TestAdapter digraph = new TestAdapter();
 		digraph.add("foo");
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		set.add("bar");
 		digraph.removeAll(set);
 		Assert.assertTrue(digraph.contains("foo"));
@@ -181,7 +181,7 @@ public class DigraphAdapterTest {
 		digraph.put("bar", "foobar", 3);
 		digraph.add("baz");
 
-		Digraph<String,Integer> reverse = digraph.reverse();
+		Digraph<String> reverse = digraph.reverse();
 		Assert.assertEquals(digraph.getVertexCount(), reverse.getVertexCount());
 		Assert.assertEquals(digraph.getEdgeCount(), reverse.getEdgeCount());
 		for (String source : digraph.vertices()) {
@@ -199,11 +199,11 @@ public class DigraphAdapterTest {
 		digraph.put("bar", "foobar", 3);
 		digraph.add("baz");
 
-		Set<String> nodes = new HashSet<String>();
+		Set<String> nodes = new HashSet<>();
 		nodes.add("foo");
 		nodes.add("bar");
 
-		Digraph<String,Integer> subgraph = digraph.subgraph(nodes);
+		Digraph<String> subgraph = digraph.subgraph(nodes);
 		Assert.assertEquals(2, subgraph.getVertexCount());
 		Assert.assertEquals(2, subgraph.getEdgeCount());
 		Assert.assertTrue(subgraph.contains("foo", "bar"));
@@ -247,14 +247,14 @@ public class DigraphAdapterTest {
 
 	@Test
 	public void testToString() {
-		Digraph<String,Integer> delegate = MapDigraph.<String,Integer>getDefaultDigraphFactory().create();
+		Digraph<String> delegate = MapDigraph.<String>getDefaultDigraphFactory().create();
 		TestAdapter digraph = new TestAdapter(delegate);
 		Assert.assertEquals(delegate.toString(), digraph.toString());
 	}
 
 	@Test
 	public void testEqualsObject() {
-		Digraph<String,Integer> delegate = MapDigraph.<String,Integer>getDefaultDigraphFactory().create();
-		Assert.assertTrue(new TestAdapter(delegate).equals(new TestAdapter(delegate)));
+		Digraph<String> delegate = MapDigraph.<String>getDefaultDigraphFactory().create();
+		Assert.assertEquals(new TestAdapter(delegate), new TestAdapter(delegate));
 	}
 }
