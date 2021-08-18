@@ -27,6 +27,7 @@ import java.util.Set;
 public interface Digraph<V> extends EdgeWeights<V> {
 	/**
 	 * Get an edge.
+	 *
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return edge weight (<code>0</code> if there is no edge from <code>source</code> to <code>target</code>)
@@ -35,6 +36,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 
 	/**
 	 * Edge test.
+	 *
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return <code>true</code> iff this digraph contains an edge from <code>source</code> to <code>target</code>
@@ -43,12 +45,14 @@ public interface Digraph<V> extends EdgeWeights<V> {
 
 	/**
 	 * Vertex test
+	 *
 	 * @return <code>true</code> iff this digraph contains <code>vertex</code>
 	 */
 	boolean contains(V vertex);
 
 	/**
 	 * Add vertex.
+	 *
 	 * @return <code>true</code> iff <code>vertex</code> has been added
 	 */
 	boolean add(V vertex);
@@ -56,6 +60,7 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	/**
 	 * Put an edge.
 	 * Vertices are added automatically if they appear in an edge.
+	 *
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @param weight edge weight
@@ -66,15 +71,17 @@ public interface Digraph<V> extends EdgeWeights<V> {
 
 	/**
 	 * Remove an edge.
+	 *
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return edge weight that has been previously set (<code>0</code> if there was no edge from <code>source</code>
 	 * to <code>target</code>)
 	 */
 	OptionalInt remove(V source, V target);
-	
+
 	/**
 	 * Remove a vertex.
+	 *
 	 * @param vertex vertex
 	 * @return <code>true</code> iff this digraph contained <code>vertex</code>
 	 */
@@ -82,18 +89,21 @@ public interface Digraph<V> extends EdgeWeights<V> {
 
 	/**
 	 * Remove all vertices.
+	 *
 	 * @param vertices vertices
 	 */
 	void removeAll(Collection<V> vertices);
 
 	/**
 	 * Iterate over vertices.
+	 *
 	 * @return vertices
 	 */
 	Iterable<V> vertices();
 
 	/**
-	 * Iterate over edge targets for given source vertex. 
+	 * Iterate over edge targets for given source vertex.
+	 *
 	 * @param source source vertex
 	 * @return edge targets of edges starting at <code>source</code>
 	 */
@@ -118,20 +128,22 @@ public interface Digraph<V> extends EdgeWeights<V> {
 	 * @return number of edges in this digraph
 	 */
 	int getEdgeCount();
-	
+
 	/**
 	 * @return <code>true</code> iff this digraph is acyclic (i.e. it is a DAG)
 	 */
 	boolean isAcyclic();
-	
+
 	/**
 	 * Get reverse digraph (same vertices, with edges reversed).
+	 *
 	 * @return reverse digraph
 	 */
 	Digraph<V> reverse();
-	
+
 	/**
 	 * Get induced subgraph (with vertices in this digraph and the given vertex set and edges that appear in this digraph over the given vertex set).
+	 *
 	 * @return subgraph
 	 */
 	Digraph<V> subgraph(Set<V> vertices);

@@ -17,5 +17,6 @@ package de.odysseus.ithaka.digraph.io.tgf;
 
 public interface TgfLabelProvider<V> {
 	String getVertexLabel(V vertex);
+
 	String getEdgeLabel(int edgeWeight);
 }

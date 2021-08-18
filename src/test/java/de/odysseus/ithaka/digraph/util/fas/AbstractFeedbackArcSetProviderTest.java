@@ -145,6 +145,7 @@ public class AbstractFeedbackArcSetProviderTest {
 				Assert.fail();
 				return null;
 			}
+
 			@Override
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				Assert.fail();

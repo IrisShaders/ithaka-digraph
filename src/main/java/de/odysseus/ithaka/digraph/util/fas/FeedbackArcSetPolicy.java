@@ -23,7 +23,7 @@ public enum FeedbackArcSetPolicy {
 	 * minimize number of feedback arcs
 	 */
 	MIN_SIZE,
-	
+
 	/**
 	 * minimize weight of feedback arcs
 	 */

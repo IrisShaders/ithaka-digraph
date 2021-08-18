@@ -24,6 +24,7 @@ package de.odysseus.ithaka.digraph;
 public interface DigraphProvider<T, G extends Digraph<?>> {
 	/**
 	 * Get a digraph.
+	 *
 	 * @param value value associated with a digraph
 	 * @return digraph
 	 */

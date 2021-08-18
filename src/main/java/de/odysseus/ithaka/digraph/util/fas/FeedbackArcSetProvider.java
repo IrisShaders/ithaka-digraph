@@ -24,6 +24,7 @@ import de.odysseus.ithaka.digraph.EdgeWeights;
 public interface FeedbackArcSetProvider {
 	/**
 	 * Calculate feedback arc set.
+	 *
 	 * @return feedback arc set
 	 */
 	<V> FeedbackArcSet<V> getFeedbackArcSet(Digraph<V> digraph,

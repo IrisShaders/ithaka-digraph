@@ -22,12 +22,13 @@ import java.util.OptionalInt;
 
 /**
  * Doubled digraph implementation.
- * 
+ *
  * @param <V> vertex type
  */
 public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements DoubledDigraph<V> {
 	/**
 	 * Factory creating <code>DoubledDigraph</code>.
+	 *
 	 * @param factory delegate factory
 	 * @return doubled digraph factory
 	 */
@@ -37,7 +38,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 
 	private final DoubledDigraphAdapter<V> reverse;
 	private final DigraphFactory<? extends Digraph<V>> factory;
-	
+
 	public DoubledDigraphAdapter() {
 		this(MapDigraph.getDefaultDigraphFactory());
 	}
@@ -61,21 +62,21 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	protected DigraphFactory<? extends DoubledDigraph<V>> getDigraphFactory() {
 		return getAdapterFactory(factory);
 	}
-	
+
 	protected DigraphFactory<? extends Digraph<V>> getDelegateFactory() {
 		return factory;
 	}
-	
+
 	@Override
 	public int getInDegree(V vertex) {
 		return reverse.getOutDegree(vertex);
 	}
-	
+
 	@Override
 	public Iterable<V> sources(V target) {
 		return reverse.targets(target);
 	}
-	
+
 	@Override
 	public final boolean add(V vertex) {
 		reverse.add0(vertex);
@@ -105,7 +106,7 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 	protected void removeAll0(Collection<V> vertices) {
 		super.removeAll(vertices);
 	}
-	
+
 	/**
 	 * Make sure the reverse digraph is kept in sync if <code>Iterator.remove()</code> is called.
 	 */
@@ -120,14 +121,17 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
 					V vertex;
+
 					@Override
 					public boolean hasNext() {
 						return delegate.hasNext();
 					}
+
 					@Override
 					public V next() {
 						return vertex = delegate.next();
 					}
+
 					@Override
 					public void remove() {
 						delegate.remove();
@@ -135,13 +139,14 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 					}
 				};
 			}
+
 			@Override
 			public String toString() {
 				return DoubledDigraphAdapter.super.vertices().toString();
 			}
 		};
 	}
-	
+
 	/**
 	 * Make sure the reverse digraph is kept in sync if <code>Iterator.remove()</code> is called.
 	 */
@@ -156,28 +161,32 @@ public class DoubledDigraphAdapter<V> extends DigraphAdapter<V> implements Doubl
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
 					V target;
+
 					@Override
 					public boolean hasNext() {
 						return delegate.hasNext();
 					}
+
 					@Override
 					public V next() {
 						return target = delegate.next();
 					}
+
 					@Override
 					public void remove() {
 						delegate.remove();
 						reverse.remove0(target, source);
 					}
 				};
-			}			
+			}
+
 			@Override
 			public String toString() {
 				return DoubledDigraphAdapter.super.targets(source).toString();
 			}
 		};
 	}
-	
+
 	@Override
 	public final OptionalInt put(V source, V target, int edge) {
 		reverse.put0(target, source, edge);

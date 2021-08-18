@@ -49,10 +49,10 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 		@Override
 		public FeedbackArcSet<V> call() {
-			return fas(digraph.subgraph(scc), weights, policy);			
+			return fas(digraph.subgraph(scc), weights, policy);
 		}
 	}
-	
+
 	private final boolean decompose;
 	private final int numberOfThreads;
 
@@ -67,6 +67,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	 * implementation methods must be able to handle arbitrary digraphs or the
 	 * {@link #getFeedbackArcSet(Digraph, EdgeWeights, FeedbackArcSetPolicy)}
 	 * method <em>must</em> be called with strongly connected components only!
+	 *
 	 * @param decompose whether to decompose into strongly connected components.
 	 */
 	protected AbstractFeedbackArcSetProvider(boolean decompose) {
@@ -79,6 +80,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 	 * and computes feedback arc sets on the components and combines the results.
 	 * Feedback calculations can be distributed to a given number of threads.
 	 * If <code>numberOfThreads == 0</code>, calculation is done in the current thread.
+	 *
 	 * @param numberOfThreads number
 	 */
 	protected AbstractFeedbackArcSetProvider(int numberOfThreads) {
@@ -88,6 +90,7 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 	/**
 	 * Compute minimum feedback arc set.
+	 *
 	 * @return feedback arc set or <code>null</code>
 	 */
 	protected <V> Digraph<V> mfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
@@ -96,11 +99,12 @@ public abstract class AbstractFeedbackArcSetProvider implements FeedbackArcSetPr
 
 	/**
 	 * Compute light feedback arc set.
+	 *
 	 * @param digraph original graph or tangle of it (if decompose == true)
 	 * @return feedback arc set
 	 */
 	protected abstract <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights);
-	
+
 	private <V> FeedbackArcSet<V> fas(Digraph<V> digraph, EdgeWeights<? super V> weights, FeedbackArcSetPolicy policy) {
 		EdgeWeights<? super V> filteredWeights = weights;
 		if (policy == FeedbackArcSetPolicy.MIN_SIZE) {

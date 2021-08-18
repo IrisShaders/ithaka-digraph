@@ -34,7 +34,7 @@ public class DigraphsTest {
 		Assert.assertTrue(empty.isAcyclic());
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void testUnmodifiableDigraph() {
 		Digraph<Integer> digraph = Digraphs.unmodifiableDigraph(new MapDigraph<>());
 		digraph.put(1, 2, 3);

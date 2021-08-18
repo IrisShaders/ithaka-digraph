@@ -32,6 +32,7 @@ import java.util.Stack;
 public class Digraphs {
 	/**
 	 * Get an unmodifiable empty digraph.
+	 *
 	 * @return empty digraph
 	 */
 	public static <V> DoubledDigraph<V> emptyDigraph() {
@@ -42,6 +43,7 @@ public class Digraphs {
 	 * Wraps the given digraph to make it unmodifiable. Whenever a method
 	 * is called on the resulting digraph that could modify the underlying
 	 * digraph, an exception is thrown.
+	 *
 	 * @param <V> vertex type
 	 * @return unmodifiable digraph equivalent to the given digraph
 	 */
@@ -56,8 +58,9 @@ public class Digraphs {
 	 * If the input graph is not a DAG, the algorithm will still perform,
 	 * but in the resulting list there will be edges from vertices to
 	 * vertices prior in the list.
-	 * @param <V> vertex type
-	 * @param digraph input graph
+	 *
+	 * @param <V>        vertex type
+	 * @param digraph    input graph
 	 * @param descending let edges go from right to left if <code>true</code>
 	 * @return list of vertices topologically ordered.
 	 */
@@ -77,7 +80,8 @@ public class Digraphs {
 
 	/**
 	 * Compute the set of vertices reachable from the given source in the given digraph.
-	 * @param <V> vertex type
+	 *
+	 * @param <V>    vertex type
 	 * @param source source vertex
 	 * @return the set of vertices reachable from <code>source</code>
 	 */
@@ -90,6 +94,7 @@ public class Digraphs {
 	/**
 	 * Answer <code>true</code> if the given digraph is acyclic (DAG).
 	 * Per definition, the empty graph and single vertex digraphs are acyclic.
+	 *
 	 * @param <V> vertex type
 	 * @return <code>true</code> iff the given digraph is acyclic
 	 */
@@ -98,7 +103,7 @@ public class Digraphs {
 		if (n < 2) {
 			return true; // no self loop
 		}
-		if (digraph.getEdgeCount() > (n*(n-1))/2) {
+		if (digraph.getEdgeCount() > (n * (n - 1)) / 2) {
 			return false;
 		}
 		return Digraphs.scc(digraph).size() == n;
@@ -112,9 +117,10 @@ public class Digraphs {
 	 * <li>the same pairs of vertices are connected by an edge in both digraphs </li>
 	 * <li>optionally, this method may require that the corresponding edges are equal.</li>
 	 * </ol>
-	 * @param <V> vertex type
-	 * @param first first digraph.
-	 * @param second second digraph.
+	 *
+	 * @param <V>          vertex type
+	 * @param first        first digraph.
+	 * @param second       second digraph.
 	 * @param compareEdges if <code>true</code>, compare edges using <code>equals()</code>.
 	 * @return <code>true</code> iff the two digraphs are equivalent according to the above description.
 	 */
@@ -167,7 +173,8 @@ public class Digraphs {
 	/**
 	 * Answer <code>true</code> if there is a path from the given source to the given target
 	 * in the supplied graph. If source is equal to target, answer <code>true</code>.
-	 * @param <V> vertex type
+	 *
+	 * @param <V>    vertex type
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return <code>true</code> iff there's a path from <code>source</code> to <code>target</code> in <code>digraph</code>
@@ -179,10 +186,10 @@ public class Digraphs {
 	/**
 	 * Perform a depth first search.
 	 *
-	 * @param <V> vertex type
-	 * @param source dfs start vertex
+	 * @param <V>        vertex type
+	 * @param source     dfs start vertex
 	 * @param discovered set of vertices already discovered during search
-	 * @param finished collection of vertices visited during search
+	 * @param finished   collection of vertices visited during search
 	 */
 	public static <V> void dfs(Digraph<V> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
 		if (discovered.add(source)) {
@@ -196,10 +203,10 @@ public class Digraphs {
 	/**
 	 * Perform an undirected depth first search.
 	 *
-	 * @param <V> vertex type
-	 * @param source dfs start vertex
+	 * @param <V>        vertex type
+	 * @param source     dfs start vertex
 	 * @param discovered set of vertices already discovered during search
-	 * @param finished collection of vertices visited during search
+	 * @param finished   collection of vertices visited during search
 	 */
 	public static <V> void dfs2(Digraph<V> digraph, V source, Set<? super V> discovered, Collection<? super V> finished) {
 		dfs2(digraph, digraph.reverse(), source, discovered, finished);
@@ -219,6 +226,7 @@ public class Digraphs {
 
 	/**
 	 * Compute strongly connected components.
+	 *
 	 * @return strongly connected components
 	 */
 	public static <V> List<Set<V>> scc(Digraph<V> digraph) {
@@ -248,6 +256,7 @@ public class Digraphs {
 
 	/**
 	 * Compute weakly connected components.
+	 *
 	 * @return weakly connected components
 	 */
 	public static <V> List<Set<V>> wcc(Digraph<V> digraph) {
@@ -268,13 +277,14 @@ public class Digraphs {
 
 	/**
 	 * Compute the reverse graph.
-	 * @param <V> vertex type
-	 * @param <G> result type
+	 *
+	 * @param <V>     vertex type
+	 * @param <G>     result type
 	 * @param digraph input digraph
 	 * @param factory factory used to create result graph
 	 * @return the reverse digraph
 	 */
-	public static <V,G extends Digraph<V>> G reverse(Digraph<V> digraph, DigraphFactory<? extends G> factory) {
+	public static <V, G extends Digraph<V>> G reverse(Digraph<V> digraph, DigraphFactory<? extends G> factory) {
 		G reverse = factory.create();
 		for (V source : digraph.vertices()) {
 			reverse.add(source);
@@ -287,6 +297,7 @@ public class Digraphs {
 
 	/**
 	 * Copy a digraph.
+	 *
 	 * @param digraph graph to copy
 	 * @param factory factory used to create copy
 	 * @return a copy of the given digraph
@@ -301,14 +312,15 @@ public class Digraphs {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Create subgraph induced by the specified vertices.
+	 *
 	 * @param <V> vertex type
 	 * @param <G> subgraph type
 	 * @return subgraph of the supplied digraph containing the specified vertices.
 	 */
-	public static <V,G extends Digraph<V>> G subgraph(
+	public static <V, G extends Digraph<V>> G subgraph(
 			Digraph<V> digraph,
 			Set<V> vertices,
 			DigraphFactory<? extends G> factory) {
@@ -328,13 +340,14 @@ public class Digraphs {
 
 	/**
 	 * Create partition graph from a given vertex decomposition.
-	 * @param <G> the type of the component graphs
-	 * @param <P> the type of the result graph
+	 *
+	 * @param <G>      the type of the component graphs
+	 * @param <P>      the type of the result graph
 	 * @param factory1 used to create the partition graph
 	 * @param factory2 used to create the subgraphs
 	 * @return a digraph of subgraphs of this digraph
 	 */
-	public static <V,G extends Digraph<V>,P extends Digraph<G>> P partition(
+	public static <V, G extends Digraph<V>, P extends Digraph<G>> P partition(
 			Digraph<V> digraph,
 			Iterable<Set<V>> sets,
 			DigraphFactory<? extends P> factory1,
@@ -342,7 +355,7 @@ public class Digraphs {
 		P partition = factory1.create();
 
 		// map vertices to their component graph
-		Map<V,G> vertex2subgraph = new HashMap<>();
+		Map<V, G> vertex2subgraph = new HashMap<>();
 		for (Set<V> set : sets) {
 			G subgraph = subgraph(digraph, set, factory2);
 			for (V v : subgraph.vertices()) {

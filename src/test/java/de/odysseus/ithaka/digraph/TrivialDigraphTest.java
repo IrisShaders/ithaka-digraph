@@ -29,14 +29,14 @@ public class TrivialDigraphTest {
 		Assert.assertTrue(new TrivialDigraph<>().add("foo"));
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void testAdd2() {
 		TrivialDigraph<Object> g = new TrivialDigraph<>();
 		g.add("foo");
 		g.add("bar");
 	}
 
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testAdd3() {
 		new TrivialDigraph<>().add(null);
 	}
@@ -91,7 +91,7 @@ public class TrivialDigraphTest {
 		Assert.assertEquals("foo", g.vertices().iterator().next());
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void testPut() {
 		new TrivialDigraph<>().put("foo", "bar", 2);
 	}

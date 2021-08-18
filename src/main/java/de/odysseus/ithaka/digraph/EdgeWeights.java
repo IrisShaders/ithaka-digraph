@@ -19,7 +19,7 @@ import java.util.OptionalInt;
 
 /**
  * Edge weights interface.
- * 
+ *
  * @param <V> vertex type
  */
 public interface EdgeWeights<V> {
@@ -34,6 +34,7 @@ public interface EdgeWeights<V> {
 
 	/**
 	 * Get edge weight
+	 *
 	 * @param source source vertex
 	 * @param target target vertex
 	 * @return weight for edge starting at <code>source</code> and ending at <code>target</code>

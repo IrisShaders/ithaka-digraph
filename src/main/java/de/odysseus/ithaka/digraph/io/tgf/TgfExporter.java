@@ -28,11 +28,11 @@ public class TgfExporter {
 	public TgfExporter() {
 		this(System.getProperty("line.separator"));
 	}
-	
+
 	public TgfExporter(String newline) {
 		this.newline = newline;
 	}
-	
+
 	public <V> void export(
 			TgfLabelProvider<V> provider,
 			Digraph<V> digraph,

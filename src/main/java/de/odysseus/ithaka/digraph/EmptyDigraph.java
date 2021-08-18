@@ -61,7 +61,7 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	public int getEdgeCount() {
 		return 0;
 	}
-	
+
 	@Override
 	public int getVertexCount() {
 		return 0;
@@ -78,7 +78,7 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	@Override
-	public OptionalInt put(V source,V target, int edgeWeight) {
+	public OptionalInt put(V source, V target, int edgeWeight) {
 		throw new UnsupportedOperationException("Empty digraph cannot have edges!");
 	}
 
@@ -95,12 +95,12 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	@Override
 	public void removeAll(Collection<V> vertices) {
 	}
-	
+
 	@Override
 	public DoubledDigraph<V> reverse() {
 		return this;
 	}
-	
+
 	@Override
 	public Digraph<V> subgraph(Set<V> vertices) {
 		return this;
@@ -115,7 +115,7 @@ class EmptyDigraph<V> implements DoubledDigraph<V> {
 	public Iterable<V> targets(Object source) {
 		return Collections.emptyList();
 	}
-	
+
 	@Override
 	public boolean isAcyclic() {
 		return true;

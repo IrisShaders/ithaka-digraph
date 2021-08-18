@@ -33,6 +33,7 @@ import java.util.TreeMap;
 public class MapDigraph<V> implements Digraph<V> {
 	/**
 	 * Factory creating default <code>MapDigraph</code>.
+	 *
 	 * @return map digraph factory
 	 */
 	public static <V> DigraphFactory<MapDigraph<V>> getDefaultDigraphFactory() {
@@ -41,8 +42,9 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	/**
 	 * Factory creating <code>MapDigraph</code>.
+	 *
 	 * @param vertexMapFactory factory to create vertex --> edge-map maps
-	 * @param edgeMapFactory factory to create edge-target --> edge-value maps
+	 * @param edgeMapFactory   factory to create edge-target --> edge-value maps
 	 * @return map digraph factory
 	 */
 	public static <V> DigraphFactory<MapDigraph<V>> getMapDigraphFactory(
@@ -100,7 +102,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	/**
 	 * Create digraph.
 	 * {@link LinkedHashMap}s will be used as vertex/edge maps.
-	 * Vertices and edge targets will be iterated in no particular order. 
+	 * Vertices and edge targets will be iterated in no particular order.
 	 */
 	public MapDigraph() {
 		this(null);
@@ -109,7 +111,8 @@ public class MapDigraph<V> implements Digraph<V> {
 	/**
 	 * Create digraph.
 	 * If a vertex comparator is given, {@link TreeMap}s will be used as vertex/edge maps.
-	 * Vertices and edge targets will be iterated in the order given by the comparator. 
+	 * Vertices and edge targets will be iterated in the order given by the comparator.
+	 *
 	 * @param comparator vertex comparator (may be <code>null</code>)
 	 */
 	public MapDigraph(final Comparator<? super V> comparator) {
@@ -119,7 +122,7 @@ public class MapDigraph<V> implements Digraph<V> {
 	/**
 	 * Create digraph.
 	 * If a vertex comparator is given, {@link TreeMap}s will be used as vertex maps
-	 * and vertices will be iterated in the order given by the vertex comparator. 
+	 * and vertices will be iterated in the order given by the vertex comparator.
 	 * If an edge comparator is given, {@link TreeMap}s will be used as edge maps
 	 * and edge targets will be iterated in the order given by the edge comparator.
 	 */
@@ -129,8 +132,9 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	/**
 	 * Create digraph.
+	 *
 	 * @param vertexMapFactory factory to create vertex --> edge-map maps
-	 * @param edgeMapFactory factory to create edge-target --> edge-value maps
+	 * @param edgeMapFactory   factory to create edge-target --> edge-value maps
 	 */
 	public MapDigraph(VertexMapFactory<V> vertexMapFactory, EdgeMapFactory<V> edgeMapFactory) {
 		this.vertexMapFactory = vertexMapFactory;
@@ -366,12 +370,12 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	@Override
 	public MapDigraph<V> reverse() {
-		return Digraphs.<V, MapDigraph<V>> reverse(this, getDigraphFactory());
+		return Digraphs.<V, MapDigraph<V>>reverse(this, getDigraphFactory());
 	}
 
 	@Override
 	public MapDigraph<V> subgraph(Set<V> vertices) {
-		return Digraphs.<V, MapDigraph<V>> subgraph(this, vertices, getDigraphFactory());
+		return Digraphs.<V, MapDigraph<V>>subgraph(this, vertices, getDigraphFactory());
 	}
 
 	@Override

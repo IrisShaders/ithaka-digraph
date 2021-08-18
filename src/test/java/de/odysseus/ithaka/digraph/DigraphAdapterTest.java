@@ -28,6 +28,7 @@ public class DigraphAdapterTest {
 		TestAdapter() {
 			super(MapDigraph.<String>getDefaultDigraphFactory().create());
 		}
+
 		TestAdapter(Digraph<String> delegate) {
 			super(delegate);
 		}

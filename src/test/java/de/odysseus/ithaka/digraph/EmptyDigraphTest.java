@@ -22,7 +22,7 @@ import java.util.OptionalInt;
 
 public class EmptyDigraphTest {
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void testAdd() {
 		new EmptyDigraph<>().add("foo");
 	}
@@ -67,7 +67,7 @@ public class EmptyDigraphTest {
 		Assert.assertFalse(new EmptyDigraph<>().vertices().iterator().hasNext());
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void testPut() {
 		new EmptyDigraph<>().put("foo", "bar", 2);
 	}

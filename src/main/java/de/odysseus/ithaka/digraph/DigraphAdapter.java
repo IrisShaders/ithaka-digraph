@@ -25,9 +25,9 @@ import java.util.Set;
  *
  * @param <V> vertex type
  */
-public abstract class DigraphAdapter<V> implements Digraph<V> {	
+public abstract class DigraphAdapter<V> implements Digraph<V> {
 	private final Digraph<V> delegate;
-	
+
 	public DigraphAdapter(Digraph<V> delegate) {
 		this.delegate = delegate;
 	}
@@ -96,32 +96,32 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 	public void removeAll(Collection<V> vertices) {
 		delegate.removeAll(vertices);
 	}
-	
+
 	@Override
 	public Digraph<V> reverse() {
 		return delegate.reverse();
 	}
-	
+
 	@Override
 	public Digraph<V> subgraph(Set<V> vertices) {
 		return delegate.subgraph(vertices);
 	}
-	
+
 	@Override
 	public boolean isAcyclic() {
 		return delegate.isAcyclic();
 	}
-	
+
 	@Override
 	public Iterable<V> targets(V source) {
 		return delegate.targets(source);
 	}
-	
+
 	@Override
 	public String toString() {
 		return delegate.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -134,7 +134,7 @@ public abstract class DigraphAdapter<V> implements Digraph<V> {
 
 		return delegate.equals(((DigraphAdapter<?>) obj).delegate);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return delegate.hashCode();

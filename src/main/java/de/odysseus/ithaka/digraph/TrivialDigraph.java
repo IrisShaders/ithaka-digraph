@@ -25,9 +25,9 @@ import java.util.Set;
 /**
  * Convenience class representing a digraph with zero or one vertex and an optional loop edge.
  * Vertex as well as edge <code>null</code> is forbidden.
- * @author beck
  *
  * @param <V> vertex type
+ * @author beck
  */
 public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	private V vertex;
@@ -41,8 +41,8 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	}
 
 	/**
-	 * @throws UnsupportedOperationException if adding the vertex would result in having 2 vertices in the graph 
-	 * @throws IllegalArgumentException if <code>vertex == null</code>
+	 * @throws UnsupportedOperationException if adding the vertex would result in having 2 vertices in the graph
+	 * @throws IllegalArgumentException      if <code>vertex == null</code>
 	 */
 	@Override
 	public boolean add(V vertex) {
@@ -91,7 +91,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	public int getEdgeCount() {
 		return hasLoop ? 1 : 0;
 	}
-	
+
 	@Override
 	public int getVertexCount() {
 		return vertex == null ? 0 : 1;
@@ -112,10 +112,12 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
 					boolean hasNext = true;
+
 					@Override
 					public boolean hasNext() {
 						return hasNext;
 					}
+
 					@Override
 					public V next() {
 						if (hasNext) {
@@ -124,6 +126,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 						}
 						throw new NoSuchElementException("No more vertices");
 					}
+
 					@Override
 					public void remove() {
 						if (hasNext) {
@@ -133,6 +136,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 					}
 				};
 			}
+
 			@Override
 			public String toString() {
 				return "[" + vertex + "]";
@@ -189,7 +193,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 	public DoubledDigraph<V> reverse() {
 		return this;
 	}
-	
+
 	@Override
 	public Digraph<V> subgraph(Set<V> vertices) {
 		return vertex != null && vertices.contains(vertex) ? this : Digraphs.emptyDigraph();
@@ -210,10 +214,12 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 			public Iterator<V> iterator() {
 				return new Iterator<V>() {
 					boolean hasNext = true;
+
 					@Override
 					public boolean hasNext() {
 						return hasNext;
 					}
+
 					@Override
 					public V next() {
 						if (hasNext) {
@@ -222,6 +228,7 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 						}
 						throw new NoSuchElementException("No more vertices");
 					}
+
 					@Override
 					public void remove() {
 						if (hasNext) {
@@ -231,13 +238,14 @@ public class TrivialDigraph<V> implements DoubledDigraph<V> {
 					}
 				};
 			}
+
 			@Override
 			public String toString() {
 				return "[" + vertex + "]";
 			}
 		};
 	}
-	
+
 	@Override
 	public boolean isAcyclic() {
 		return !hasLoop;

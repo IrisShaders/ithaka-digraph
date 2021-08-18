@@ -31,7 +31,7 @@ public class DotAttribute {
 		}
 		return true;
 	}
-	
+
 	private final String name;
 	private final String value;
 	private final boolean quotes;
@@ -47,27 +47,27 @@ public class DotAttribute {
 		this.value = value.toString();
 		this.quotes = false;
 	}
-	
+
 	public DotAttribute(String name, boolean value) {
 		this.name = name;
 		this.value = String.valueOf(value);
 		this.quotes = false;
 	}
-	
+
 	public DotAttribute(String name, Color value) {
 		this.name = name;
 		this.value = String.format("#%6X", value.getRGB() & 0x00FFFFFF);
 		this.quotes = true;
-	}	
-	
+	}
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getValue() {
 		return value;
 	}
-	
+
 	public void write(Writer writer) throws IOException {
 		writer.write(name);
 		writer.write('=');

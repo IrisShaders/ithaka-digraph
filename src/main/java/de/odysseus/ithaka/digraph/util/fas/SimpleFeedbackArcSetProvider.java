@@ -42,7 +42,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 	public SimpleFeedbackArcSetProvider() {
 		super(true);
 	}
-	
+
 	/**
 	 * Calculate feedback arc set using the specified number of threads.
 	 */
@@ -52,6 +52,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 
 	/**
 	 * create equivalent graphs with different edge orderings.
+	 *
 	 * @param digraph digraph to copy
 	 * @return list of copies
 	 */
@@ -66,7 +67,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 			order.put(source, index);
 			shuffle.add(index++);
 		}
-		
+
 		Random random = new Random(7);
 		for (int i = 0; i < count; i++) {
 			Collections.shuffle(shuffle, random);
@@ -88,12 +89,13 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		}
 		return copies;
 	}
-	
+
 	/**
 	 * Compute simple feedback arc set by performing |n| DFS traversals (each starting
 	 * with a different vertex) on the tangle, taking non-forward edges as feedback.
 	 * The minimum weight feedback arc set among those |n| results is returned.
-	 * @param tangle strongly connected component
+	 *
+	 * @param tangle  strongly connected component
 	 * @param weights edge weights
 	 * @return feedback arc set
 	 */
@@ -105,7 +107,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		int minWeight = Integer.MAX_VALUE;
 		int minSize = Integer.MAX_VALUE;
 		List<V> minFinished = null;
-		
+
 		/*
 		 * threshold on max. number of iterations (avoid running forever)
 		 */
@@ -114,7 +116,7 @@ public class SimpleFeedbackArcSetProvider extends AbstractFeedbackArcSetProvider
 		/*
 		 * perform DFS for each node, keep best result
 		 */
-		List<Digraph<V>> copies = copies(tangle, Math.min(10, tangle.getVertexCount()));		
+		List<Digraph<V>> copies = copies(tangle, Math.min(10, tangle.getVertexCount()));
 		List<V> finished = new ArrayList<>(tangle.getVertexCount());
 		Set<V> discovered = new HashSet<>(tangle.getVertexCount());
 		for (V start : tangle.vertices()) {
