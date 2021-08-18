@@ -18,57 +18,61 @@ package de.odysseus.ithaka.digraph.io.tgf;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import de.odysseus.ithaka.digraph.Digraph;
+import de.odysseus.ithaka.digraph.MapDigraph;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TGFExporterTest {
+public class TgfExporterTest {
 	@Test
-	public void testSimple() throws IOException {
-		SimpleDigraph<Integer> digraph = new SimpleDigraphAdapter<Integer>();
-		digraph.add(1, 2);
-		digraph.add(1, 3);
-		digraph.add(4, 2);
-		digraph.add(5, 6);
+	public void testUnweighted() throws IOException {
+		Digraph<Integer> digraph = new MapDigraph<>();
+		digraph.put(1, 2, 1);
+		digraph.put(1, 3, 1);
+		digraph.put(4, 2, 1);
+		digraph.put(5, 6, 1);
 		digraph.add(7);
 
-		TGFProvider<Integer, Object> provider = new TGFProvider<Integer, Object>() {
+		TgfLabelProvider<Integer> provider = new TgfLabelProvider<Integer>() {
 			@Override
 			public String getVertexLabel(Integer vertex) {
 				return String.valueOf(vertex);
 			}
+
 			@Override
-			public String getEdgeLabel(Object edge) {
+			public String getEdgeLabel(int edgeWeight) {
 				return null;
 			}
 		};
 		
 		StringWriter writer = new StringWriter();
-		new TGFExporter("  ").export(provider, digraph, writer);
+		new TgfExporter("  ").export(provider, digraph, writer);
 		Assert.assertEquals("1 1  2 2  3 3  4 4  5 5  6 6  7 7  #  1 2  1 3  4 2  5 6  ", writer.toString());
 	}
 
 	@Test
 	public void testWeighted() throws IOException {
-		WeightedDigraph<Integer> digraph = new WeightedDigraphAdapter<Integer>();
-		digraph.add(1, 2, 1);
-		digraph.add(1, 3, 2);
-		digraph.add(4, 2, 3);
-		digraph.add(5, 6, 4);
+		Digraph<Integer> digraph = new MapDigraph<>();
+		digraph.put(1, 2, 1);
+		digraph.put(1, 3, 2);
+		digraph.put(4, 2, 3);
+		digraph.put(5, 6, 4);
 		digraph.add(7);
 
-		TGFProvider<Integer, Integer> provider = new TGFProvider<Integer, Integer>() {
+		TgfLabelProvider<Integer> provider = new TgfLabelProvider<Integer>() {
 			@Override
 			public String getVertexLabel(Integer vertex) {
 				return String.valueOf(vertex);
 			}
+
 			@Override
-			public String getEdgeLabel(Integer edge) {
-				return String.valueOf(edge);
+			public String getEdgeLabel(int edgeWeight) {
+				return Integer.toString(edgeWeight);
 			}
 		};
 		
 		StringWriter writer = new StringWriter();
-		new TGFExporter("  ").export(provider, digraph, writer);
+		new TgfExporter("  ").export(provider, digraph, writer);
 		Assert.assertEquals("1 1  2 2  3 3  4 4  5 5  6 6  7 7  #  1 2 1  1 3 2  4 2 3  5 6 4  ", writer.toString());
 	}
 }

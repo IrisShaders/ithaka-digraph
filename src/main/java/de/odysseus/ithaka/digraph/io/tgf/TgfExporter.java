@@ -22,25 +22,26 @@ import java.util.Map;
 
 import de.odysseus.ithaka.digraph.Digraph;
 
-public class TGFExporter {
+public class TgfExporter {
 	private final String newline;
-	
-	public TGFExporter() {
+
+	public TgfExporter() {
 		this(System.getProperty("line.separator"));
 	}
 	
-	public TGFExporter(String newline) {
+	public TgfExporter(String newline) {
 		this.newline = newline;
 	}
 	
 	public <V> void export(
-			TGFProvider<? super V, ? super E> provider,
-			Digraph<? extends V, ? extends E> digraph,
+			TgfLabelProvider<V> provider,
+			Digraph<V> digraph,
 			Writer writer) throws IOException {
-		Map<V, Integer> index = new HashMap<V, Integer>();
+		Map<V, Integer> index = new HashMap<>();
 		int n = 0;
+
 		for (V vertex : digraph.vertices()) {
-			++n;
+			n += 1;
 			index.put(vertex, n);
 			writer.write(String.valueOf(n));
 			String label = provider.getVertexLabel(vertex);
@@ -50,8 +51,10 @@ public class TGFExporter {
 			}
 			writer.write(newline);
 		}
+
 		writer.write('#');
 		writer.write(newline);
+
 		for (V source : digraph.vertices()) {
 			for (V target : digraph.targets(source)) {
 				writer.write(String.valueOf(index.get(source)));
@@ -65,6 +68,7 @@ public class TGFExporter {
 				writer.write(newline);
 			}
 		}
+
 		writer.flush();
 	}
 }
