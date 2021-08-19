@@ -116,7 +116,7 @@ public class AbstractFeedbackArcSetProviderTest {
 			protected <V> Digraph<V> lfas(Digraph<V> digraph, EdgeWeights<? super V> weights) {
 				threads.add(Thread.currentThread());
 				try {
-					Thread.sleep(30);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					Assert.fail();
 				}

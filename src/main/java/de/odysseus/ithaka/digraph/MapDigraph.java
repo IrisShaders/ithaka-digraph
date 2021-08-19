@@ -15,6 +15,8 @@
  */
 package de.odysseus.ithaka.digraph;
 
+import it.unimi.dsi.fastutil.objects.*;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +33,8 @@ import java.util.TreeMap;
  * @param <V> vertex type
  */
 public class MapDigraph<V> implements Digraph<V> {
+	private static final int INVALID_WEIGHT = Integer.MIN_VALUE;
+
 	/**
 	 * Factory creating default <code>MapDigraph</code>.
 	 *
@@ -57,20 +61,20 @@ public class MapDigraph<V> implements Digraph<V> {
 	 * Vertex map factory (vertex to edge map).
 	 */
 	public interface VertexMapFactory<V> {
-		Map<V, Map<V, Integer>> create();
+		Map<V, Object2IntMap<V>> create();
 	}
 
 	/**
 	 * Edge map factory (edge target to edge value).
 	 */
 	public interface EdgeMapFactory<V> {
-		Map<V, Integer> create(V source);
+		Object2IntMap<V> create(V source);
 	}
 
 	private static <V> VertexMapFactory<V> getDefaultVertexMapFactory(final Comparator<? super V> comparator) {
 		return new VertexMapFactory<V>() {
 			@Override
-			public Map<V, Map<V, Integer>> create() {
+			public Map<V, Object2IntMap<V>> create() {
 				if (comparator == null) {
 					return new LinkedHashMap<>(16);
 				} else {
@@ -83,19 +87,29 @@ public class MapDigraph<V> implements Digraph<V> {
 	private static <V> EdgeMapFactory<V> getDefaultEdgeMapFactory(final Comparator<? super V> comparator) {
 		return new EdgeMapFactory<V>() {
 			@Override
-			public Map<V, Integer> create(V ignore) {
+			public Object2IntMap<V> create(V ignore) {
+				Object2IntMap<V> map;
+
 				if (comparator == null) {
-					return new LinkedHashMap<>(16);
+					map = new Object2IntLinkedOpenHashMap<>(16);
 				} else {
-					return new TreeMap<>(comparator);
+					map = new Object2IntAVLTreeMap<>(comparator);
 				}
+
+				map.defaultReturnValue(INVALID_WEIGHT);
+
+				return map;
 			}
 		};
+	}
+	
+	private static <V> Object2IntMap<V> createEmptyMap() {
+		return Object2IntMaps.emptyMap();
 	}
 
 	private final VertexMapFactory<V> vertexMapFactory;
 	private final EdgeMapFactory<V> edgeMapFactory;
-	private final Map<V, Map<V, Integer>> vertexMap;
+	private final Map<V, Object2IntMap<V>> vertexMap;
 
 	private int edgeCount;
 
@@ -146,60 +160,69 @@ public class MapDigraph<V> implements Digraph<V> {
 	@Override
 	public boolean add(V vertex) {
 		if (!vertexMap.containsKey(vertex)) {
-			vertexMap.put(vertex, Collections.emptyMap());
+			vertexMap.put(vertex, createEmptyMap());
 			return true;
 		}
+
 		return false;
 	}
 
 	@Override
 	public OptionalInt put(V source, V target, int weight) {
-		Map<V, Integer> edgeMap = vertexMap.get(source);
+		if (weight == INVALID_WEIGHT) {
+			throw new IllegalArgumentException("Invalid weight " + weight);
+		}
+
+		Object2IntMap<V> edgeMap = vertexMap.get(source);
 
 		if (edgeMap == null || edgeMap.isEmpty()) {
 			vertexMap.put(source, edgeMap = edgeMapFactory.create(source));
 		}
 
-		Integer result = edgeMap.put(target, weight);
+		int previousInt = edgeMap.put(target, weight);
+		OptionalInt previous;
 
-		if (result == null) {
+		if (previousInt != INVALID_WEIGHT) {
+			previous = OptionalInt.of(previousInt);
+		} else {
+			previous = OptionalInt.empty();
 			add(target);
 			edgeCount++;
 		}
 
-		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
+		return previous;
 	}
 
 	@Override
 	public OptionalInt get(V source, V target) {
-		Map<V, Integer> edgeMap = vertexMap.get(source);
+		Object2IntMap<V> edgeMap = vertexMap.get(source);
 
-		if (edgeMap == null) {
+		if (edgeMap == null || edgeMap.isEmpty()) {
 			return OptionalInt.empty();
 		}
 
-		Integer result = edgeMap.get(target);
+		int result = edgeMap.getInt(target);
 
-		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
+		return result == INVALID_WEIGHT ? OptionalInt.empty() : OptionalInt.of(result);
 	}
 
 	@Override
 	public OptionalInt remove(V source, V target) {
-		Map<V, Integer> edgeMap = vertexMap.get(source);
+		Object2IntMap<V> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || !edgeMap.containsKey(target)) {
 			return OptionalInt.empty();
 		}
-		Integer result = edgeMap.remove(target);
+		int result = edgeMap.removeInt(target);
 		edgeCount--;
 		if (edgeMap.isEmpty()) {
-			vertexMap.put(source, Collections.emptyMap());
+			vertexMap.put(source, createEmptyMap());
 		}
-		return result == null ? OptionalInt.empty() : OptionalInt.of(result);
+		return result == INVALID_WEIGHT ? OptionalInt.empty() : OptionalInt.of(result);
 	}
 
 	@Override
 	public boolean remove(V vertex) {
-		Map<V, Integer> edgeMap = vertexMap.get(vertex);
+		Object2IntMap<V> edgeMap = vertexMap.get(vertex);
 		if (edgeMap == null) {
 			return false;
 		}
@@ -214,14 +237,14 @@ public class MapDigraph<V> implements Digraph<V> {
 	@Override
 	public void removeAll(Collection<V> vertices) {
 		for (V vertex : vertices) {
-			Map<V, Integer> edgeMap = vertexMap.get(vertex);
+			Object2IntMap<V> edgeMap = vertexMap.get(vertex);
 			if (edgeMap != null) {
 				edgeCount -= edgeMap.size();
 				vertexMap.remove(vertex);
 			}
 		}
 		for (V source : vertexMap.keySet()) {
-			Map<V, Integer> edgeMap = vertexMap.get(source);
+			Object2IntMap<V> edgeMap = vertexMap.get(source);
 			Iterator<V> iterator = edgeMap.keySet().iterator();
 			while (iterator.hasNext()) {
 				if (vertices.contains(iterator.next())) {
@@ -230,16 +253,16 @@ public class MapDigraph<V> implements Digraph<V> {
 				}
 			}
 			if (edgeMap.isEmpty()) {
-				vertexMap.put(source, Collections.emptyMap());
+				vertexMap.put(source, createEmptyMap());
 			}
 		}
 	}
 
 	@Override
 	public boolean contains(V source, V target) {
-		Map<V, Integer> edgeMap = vertexMap.get(source);
+		Object2IntMap<V> edgeMap = vertexMap.get(source);
 
-		if (edgeMap == null) {
+		if (edgeMap == null || edgeMap.isEmpty()) {
 			return false;
 		}
 
@@ -275,7 +298,7 @@ public class MapDigraph<V> implements Digraph<V> {
 
 					@Override
 					public void remove() {
-						Map<V, Integer> edgeMap = vertexMap.get(vertex);
+						Object2IntMap<V> edgeMap = vertexMap.get(vertex);
 						delegate.remove();
 						edgeCount -= edgeMap.size();
 						for (V source : vertexMap.keySet()) {
@@ -294,7 +317,7 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	@Override
 	public Iterable<V> targets(final V source) {
-		final Map<V, Integer> edgeMap = vertexMap.get(source);
+		final Object2IntMap<V> edgeMap = vertexMap.get(source);
 		if (edgeMap == null || edgeMap.isEmpty()) {
 			return Collections.emptySet();
 		}
@@ -319,7 +342,7 @@ public class MapDigraph<V> implements Digraph<V> {
 						delegate.remove();
 						edgeCount--;
 						if (edgeMap.isEmpty()) {
-							vertexMap.put(source, Collections.emptyMap());
+							vertexMap.put(source, createEmptyMap());
 						}
 					}
 				};
@@ -352,7 +375,7 @@ public class MapDigraph<V> implements Digraph<V> {
 
 	@Override
 	public int getOutDegree(V vertex) {
-		Map<V, Integer> edgeMap = vertexMap.get(vertex);
+		Object2IntMap<V> edgeMap = vertexMap.get(vertex);
 		if (edgeMap == null) {
 			return 0;
 		}
